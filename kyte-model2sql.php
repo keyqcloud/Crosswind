@@ -111,6 +111,10 @@ foreach ($models as $model) {
 					$output .= ' varchar';
 					if (array_key_exists('size', $attrs)) {
 						$output .= '('.$attrs['size'].')';
+					} else {
+						echo "\n";
+						echo "\e[0;31m\033[1mvarchar requires size to be declared for column $name of table $tbl_name.\033[0m\n";
+						print_usage();
 					}
 				} elseif ($attrs['type'] == 'd' && array_key_exists('precision', $attrs) && array_key_exists('scale', $attrs)) {
 					$output .= ' decimal('.$attrs['precision'].','.$attrs['scale'].')';
