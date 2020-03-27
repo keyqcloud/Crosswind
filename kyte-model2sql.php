@@ -140,6 +140,6 @@ foreach ($models as $model) {
 	$output .= ") ENGINE=$engine DEFAULT CHARSET=$charset;\n\n";
 }
 
-echo $output;
+file_put_contents('schema.sql', $output);
 
 ?>
