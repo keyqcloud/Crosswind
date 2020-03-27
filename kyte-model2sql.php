@@ -85,6 +85,8 @@ foreach ($models as $model) {
 	$cols = $$model['struct'];
 	$pk_name = '';	// store col struct for primary key
 
+	$type_text = (array_key_exists('text', $attrs) ? ($attrs['text'] ? true : false) : false);
+
 	$output .= "DROP TABLE IF EXISTS `$tbl_name`;\n";
 	$output .= "CREATE TABLE `$tbl_name` (\n";
 	// table columns
@@ -94,7 +96,7 @@ foreach ($models as $model) {
 		if ($attrs['date']) {
 			$output .= ' bigint unsigned';
 		} else {
-			if ($attrs['text']) {
+			if ($type_text) {
 				$output .= ' text';
 			} else {
 				if ($attrs['type'] == 'i') {
