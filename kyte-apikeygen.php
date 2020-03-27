@@ -28,6 +28,6 @@ for ($i=0; $i < $count; $i++) {
 	$output .= "INSERT INTO APIKey(`identifier`, `public_key`, `secret_key`, `epoch`) VALUES('$identifier', '$public_key', '$secret_key', $epoch);\n";
 }
 
-echo $output;
+file_put_contents('keys.sql', $output);
 
 ?>
