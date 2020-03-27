@@ -85,12 +85,12 @@ foreach ($models as $model) {
 	$cols = $$model['struct'];
 	$pk_name = '';	// store col struct for primary key
 
-	$type_text = (array_key_exists('text', $attrs) ? ($attrs['text'] ? true : false) : false);
-
 	$output .= "DROP TABLE IF EXISTS `$tbl_name`;\n";
 	$output .= "CREATE TABLE `$tbl_name` (\n";
 	// table columns
 	foreach ($cols as $name => $attrs) {
+		$type_text = (array_key_exists('text', $attrs) ? ($attrs['text'] ? true : false) : false);
+		
 		$output .= "\t`$name`";	// column name
 		// type, size and if signed or not
 		if ($attrs['date']) {
