@@ -90,7 +90,7 @@ foreach ($models as $model) {
 	// table columns
 	foreach ($cols as $name => $attrs) {
 		$type_text = (array_key_exists('text', $attrs) ? ($attrs['text'] ? true : false) : false);
-		
+
 		$output .= "\t`$name`";	// column name
 		// type, size and if signed or not
 		if ($attrs['date']) {
@@ -125,7 +125,6 @@ foreach ($models as $model) {
 			// default value?
 			$output .= ' DEFAULT ';
 			$output .= (is_string($attrs['default']) ? "'".$attrs['default']."'" : $attrs['default']);
-			$pk_name = $name;
 		}
 		$output .= ($attrs['required'] ? ' NOT NULL' : '');		// required?
 		if (array_key_exists('pk', $attrs)) {
