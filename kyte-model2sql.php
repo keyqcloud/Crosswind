@@ -134,7 +134,7 @@ foreach ($models as $model) {
 		if (array_key_exists('pk', $attrs)) {
 			// primary key?
 			if ($attrs['pk']) {
-				$output .= ' AUTO_INCREMENT';
+				$output .= ' NOT NULL AUTO_INCREMENT';
 				$pk_name = $name;
 			}
 		}
