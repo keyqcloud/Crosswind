@@ -89,6 +89,25 @@ foreach ($models as $model) {
 	$output .= "CREATE TABLE `$tbl_name` (\n";
 	// table columns
 	foreach ($cols as $name => $attrs) {
+		// check if required attrs are set
+		if (!isset($attrs['date'])) {
+			echo "\n";
+			echo "\e[0;31m\033[1mdate attribute must be declared for column $name of table $tbl_name.\033[0m\n";
+			print_usage();
+		}
+
+		if (!isset($attrs['required'])) {
+			echo "\n";
+			echo "\e[0;31m\033[1mrequired attribute must be declared for column $name of table $tbl_name.\033[0m\n";
+			print_usage();
+		}
+
+		if (!isset($attrs['type'])) {
+			echo "\n";
+			echo "\e[0;31m\033[1mtype attribute must be declared for column $name of table $tbl_name.\033[0m\n";
+			print_usage();
+		}
+
 		$type_text = (array_key_exists('text', $attrs) ? ($attrs['text'] ? true : false) : false);
 
 		$output .= "\t`$name`";	// column name
