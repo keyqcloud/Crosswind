@@ -66,7 +66,7 @@ foreach ($models as $model) {
     /* ******************** HTML */
 
     // generate table name
-    $tablename = $$model['name'].'-'.uniqid();
+    $tablename = $$model['name'].'_'.uniqid();
     // open data table tag
     $output = '<table id="dt'.$tablename.'" class="display nowrap table table-striped table-bordered" style="width:100%">';
     $output .= "\n";
@@ -172,7 +172,7 @@ foreach ($models as $model) {
     $output .= '});';
     $output .= "\n";
 
-    $output .= "}, function(response) { // error handler });";
+    $output .= "}, function(response) { /* error handler */ });";
     $output .= "\n";
 
     // close js tag
