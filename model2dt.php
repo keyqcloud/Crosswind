@@ -118,7 +118,7 @@ foreach ($models as $model) {
     $output .= "\n";
 
     // create js variable for data table
-    $output .= 'var '.$tablename;
+    $output .= 'var '.$tablename.';';
     $output .= "\n";
 
 
