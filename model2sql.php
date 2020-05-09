@@ -38,8 +38,11 @@ $models = [];
 foreach (glob("$builtin_models/*.php") as $filename) {
     require_once($filename);
     $model_name = substr($filename, 0, strrpos($filename, "."));
-    $model_name = explode('/', $model_name);
-    $models[] = end($model_name);
+	$model_name = explode('/', $model_name);
+	$model_name = end($model_name);
+    if (!in_array($model_name, $models)) {
+        $models[] = $model_name;
+    }
 }
 
 /* Load user-defined files */
@@ -48,8 +51,11 @@ if ( file_exists( $user_models ) && is_dir( $user_models ) ) {
     foreach (glob("$user_models/*.php") as $filename) {
         require_once($filename);
         $model_name = substr($filename, 0, strrpos($filename, "."));
-        $model_name = explode('/', $model_name);
-        $models[] = end($model_name);
+		$model_name = explode('/', $model_name);
+		$model_name = end($model_name);
+        if (!in_array($model_name, $models)) {
+			$models[] = $model_name;
+		}
     }
 }
 
