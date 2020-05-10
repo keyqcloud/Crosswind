@@ -182,10 +182,10 @@ foreach ($models as $model) {
     $output .= '"targets": ['.$i.'],';
     $output .= "\n";
     $output .= "\t\t\t\t";
-    $output .= '"sortable": false';
+    $output .= '"sortable": false,';
     $output .= "\n";
     $output .= "\t\t\t\t";
-    $output .= '"data": ""';
+    $output .= '"data": "",';
     $output .= "\n";
     $output .= "\t\t\t\t";
     $output .= "render: function (data, type, row, meta) { return '<a class=\"mr-3 delete\"><i class=\"fas fa-trash-alt text-danger\"></i></a><a class=\"mr-3 edit\"><i class=\"fas fa-edit text-primary\"></i></a><a class=\"mr-3 viewDetails\"><i class=\"fas fa-info text-success\"></i></a>'; }";
