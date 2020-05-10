@@ -24,7 +24,7 @@ if (!array_key_exists('charset', $options)) print_usage();
 if (!array_key_exists('appdir', $options)) print_usage();
 
 // flag to output each table as separate schema file
-$isSep = array_key_exists('sep', $options);
+$isSep = array_key_exists('sep', $options) ? true : false;
 
 
 $builtin_models = $options['appdir']."/builtin/models";
