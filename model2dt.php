@@ -10,12 +10,24 @@ function print_usage() {
 }
 
 $longopts  = array(
-    "modeldir:",		// No value
+    "modeldir:",
+    "lang:",
 );
 $options = getopt(null, $longopts);
 
 if (!array_key_exists('modeldir', $options)) print_usage();
-
+$lang = '';
+if (isset($options['lang'])) {
+    switch ($options['lang']) {
+        case 'ja':
+            $lang = 'language: { "url": "https://cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Japanese.json" }, ';
+            break;
+        
+        default:
+            $lang = '';
+            break;
+    }
+}
 $path = $options['modeldir'];
 
 // check if dirs exists for each of the models
@@ -90,6 +102,11 @@ foreach ($models as $model) {
         $output .= "\n";
     }
 
+    // last column for crud controls
+    $output .= "\t\t\t";
+    $output .= '<th></th>';
+    $output .= "\n";
+
     // close table row
     $output .= "\t\t";
     $output .= '</tr>';
@@ -129,15 +146,14 @@ foreach ($models as $model) {
     $output .= "\n";
     
     $output .= "\t";
-    $output .= $tablename.' = $("#'.$tablename.'").DataTable( { responsive: true, data: response,';
+    $output .= $tablename.' = $("#'.$tablename.'").DataTable( { responsive: true, '.$lang.'data: response.data,';
     $output .= "\n";
     
     $output .= "\t\t";
     $output .= 'columnDefs: [';
     $output .= "\n";
 
-    $i = 0;
-    $limit = count($cols) - 1;
+    $i=0;
     foreach ($cols as $name => $attrs) {
         $output .= "\t\t\t";
         $output .= '{';
@@ -151,18 +167,32 @@ foreach ($models as $model) {
         $output .= '"data": "'.$name.'"';
         $output .= "\n";
 
-        if ($i < $limit) {
-            $output .= "\t\t\t";
-            $output .= '},';
-            $output .= "\n";
-        } else {
-            $output .= "\t\t\t";
-            $output .= '}';
-            $output .= "\n";
-        }
+        $output .= "\t\t\t";
+        $output .= '},';
+        $output .= "\n";
 
         $i++;
     }
+
+    // crud controls
+    $output .= "\t\t\t";
+    $output .= '{';
+    $output .= "\n";
+    $output .= "\t\t\t\t";
+    $output .= '"targets": ['.$i.'],';
+    $output .= "\n";
+    $output .= "\t\t\t\t";
+    $output .= '"sortable": false';
+    $output .= "\n";
+    $output .= "\t\t\t\t";
+    $output .= '"data": ""';
+    $output .= "\n";
+    $output .= "\t\t\t\t";
+    $output .= "render: function (data, type, row, meta) { return '<a class=\"mr-3 delete\"><i class=\"fas fa-trash-alt text-danger\"></i></a><a class=\"mr-3 edit\"><i class=\"fas fa-edit text-primary\"></i></a><a class=\"mr-3 viewDetails\"><i class=\"fas fa-info text-success\"></i></a>'; }";
+    $output .= "\n";
+    $output .= "\t\t\t";
+    $output .= '}';
+    $output .= "\n";
                 
     $output .= "\t\t";
     $output .= '], order: [[ 0, "desc" ]]';
