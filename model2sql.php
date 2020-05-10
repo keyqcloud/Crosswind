@@ -12,15 +12,20 @@ function print_usage() {
 }
 
 $longopts  = array(
-    "engine:",		// Required value
-    "charset:",		// Optional value
-    "appdir:",		// No value
+    "engine:",
+    "charset:",
+	"appdir:",
+	"sep:",
 );
 $options = getopt(null, $longopts);
 
 if (!array_key_exists('engine', $options)) print_usage();
 if (!array_key_exists('charset', $options)) print_usage();
 if (!array_key_exists('appdir', $options)) print_usage();
+
+// flag to output each table as separate schema file
+$isSep = array_key_exists('sep', $options);
+
 
 $builtin_models = $options['appdir']."/builtin/models";
 $user_models = $options['appdir']."/app/models";
@@ -168,8 +173,13 @@ foreach ($models as $model) {
 	// primary key
 	$output .= "\tPRIMARY KEY (`$pk_name`)\n";
 	$output .= ") ENGINE=$engine DEFAULT CHARSET=$charset;\n\n";
+
+	if ($isSep) {
+		file_put_contents($tbl_name.'.sql', $output);
+		$output = '';	// reset for next table
+	}
 }
 
-file_put_contents('schema.sql', $output);
+if (!$isSep) file_put_contents('schema.sql', $output);
 
 ?>
