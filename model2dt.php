@@ -146,7 +146,7 @@ foreach ($models as $model) {
     $output .= "\n";
     
     $output .= "\t";
-    $output .= $tablename.' = $("#'.$tablename.'").DataTable( { responsive: true, '.$lang.'data: response.data,';
+    $output .= $tablename.' = $("#dt'.$tablename.'").DataTable( { responsive: true, '.$lang.'data: response.data,';
     $output .= "\n";
     
     $output .= "\t\t";
