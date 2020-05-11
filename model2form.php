@@ -18,12 +18,11 @@ $options = getopt(null, $longopts);
 
 if (!array_key_exists('format', $options)) print_usage();
 if (!array_key_exists('model', $options)) print_usage();
+if (!array_key_exists('table', $options)) print_usage();
 
 $path['format'] = $options['format'];
 $path['model'] = $options['model'];
-
-$tableid = null;
-if (array_key_exists('table', $options)) $tableid = $options['table'];
+$tableid = $options['table'];
 
 
 // check if file exists
@@ -270,10 +269,12 @@ file_put_contents($format["model"].'.html', $output);
 
 /********************** JAVASCRIPT */
 
-// use material select for the options - is ignored if mdb is not supported
-$output = "$(document).ready(function() { ";
+$output .= "var row".$formid.";";
+$output .= "\n\n";
+$output .= "$(document).ready(function() { ";
 $output .= "\n\n";
 
+// use material select for the options - is ignored if mdb is not supported
 $output .= "\t";
 $output .= "$('.mdb-select').materialSelect();";
 $output .= "\n\n\n";
@@ -293,6 +294,9 @@ foreach ($format['fields'] as $fields) {
         $output .= "\n";
     }
 }
+$output .= "\t\t";
+$output .= "$('#form".$formid."').data('objidx', '');";
+$output .= "\n";
 $output .= "\t\t";
 $output .= "$('#modal".$formid."').modal('show');";
 $output .= "\n";
@@ -328,13 +332,61 @@ $output .= "\t\t\t";
 $output .= "if ($('#form".$formid."').data('objidx')) {";
 $output .= "\n";
 $output .= "\t\t\t\t";
-$output .= "k.put('".$format["model"]."', 'id', $('#form".$formid."').data('objidx'), null, form.serialize(), function() { /* callback function */ }, function(response) { /* error callback function */ });";
+$output .= "k.put('".$format["model"]."', 'id', $('#form".$formid."').data('objidx'), null, form.serialize(), function() {";
+$output .= "\n";
+$output .= "\t\t\t\t\t";
+$output .= "/* callback function */";
+$output .= "\n";
+$output .= "\t\t\t\t\t";
+$output .= "row".$formid.".data(response.data).draw();";
+$output .= "\n";
+$output .= "\t\t\t\t\t";
+$output .= "$('#modal".$formid."').modal('hide');";
+$output .= "\n";
+$output .= "\t\t\t\t\t";
+$output .= "$('#form".$formid."')[0].reset();";
+$output .= "\n";
+$output .= "\t\t\t\t";
+$output .= "}, function(response) {";
+$output .= "\n";
+$output .= "\t\t\t\t\t";
+$output .= "/* error callback function */";
+$output .= "\n";
+$output .= "\t\t\t\t\t";
+$output .= "k.alert('Error', 'Error message：'+response, 'error', 0);";
+$output .= "\n";
+$output .= "\t\t\t\t";
+$output .= "});";
 $output .= "\n";
 $output .= "\t\t\t";
 $output .= "} else {";
 $output .= "\n";
 $output .= "\t\t\t\t";
-$output .= "k.post('".$format["model"]."', null, form.serialize(), function() { /* callback function */ }, function(response) { /* error callback function */ });";
+$output .= "k.post('".$format["model"]."', null, form.serialize(), function() {";
+$output .= "\n";
+$output .= "\t\t\t\t\t";
+$output .= "/* callback function */";
+$output .= "\n";
+$output .= "\t\t\t\t\t";
+$output .= $tableid.".row.add(response.data).draw();";
+$output .= "\n";
+$output .= "\t\t\t\t\t";
+$output .= "$('#modal".$formid."').modal('hide');";
+$output .= "\n";
+$output .= "\t\t\t\t\t";
+$output .= "$('#form".$formid."')[0].reset();";
+$output .= "\n";
+$output .= "\t\t\t\t";
+$output .= "}, function(response) {";
+$output .= "\n";
+$output .= "\t\t\t\t\t";
+$output .= "/* error callback function */";
+$output .= "\n";
+$output .= "\t\t\t\t\t";
+$output .= "k.alert('Error', 'Error message：'+response, 'error', 0);";
+$output .= "\n";
+$output .= "\t\t\t\t";
+$output .= "});";
 $output .= "\n";
 $output .= "\t\t\t";
 $output .= "}";
@@ -360,7 +412,7 @@ $output .= "\n";
 foreach ($format['fields'] as $fields) {
     foreach ($fields['row'] as $row) {
         $output .= "\t\t\t";
-        $output .= "$('#".$formid.'_'.$row['name']."').val(response.data.".$row['name'].").change();";
+        $output .= "$('#".$formid.'_'.$row['name']."').val(response.data[0].".$row['name'].").change();";
         $output .= "\n";
     }
 }
@@ -395,62 +447,69 @@ $output .= "\t";
 $output .= "});";
 $output .= "\n\n\n";
 
-if ($tableid !== null) {
-    // function to edit (with table)
-    $output .= "\t";
-    $output .= "/* EDIT FROM TABLE */";
-    $output .= "\n";
-    $output .= "\t";
-    $output .= "$('#dt".$tableid." tbody').on('click', '.edit', function () {";
-    $output .= "\n";
-    $output .= "\t\t";
-    $output .= "var data = ".$tableid.".row($(this).parents('tr')).data();";
-    $output .= "\n";
-    $output .= "\t\t";
-    $output .= "k.get('".$format["model"]."', 'id', data['id'], function(data) {";
-    $output .= "\n";
-    // populate form with data
-    foreach ($format['fields'] as $fields) {
-        foreach ($fields['row'] as $row) {
-            $output .= "\t\t\t";
-            $output .= "$('#".$formid.'_'.$row['name']."').val(response.data.".$row['name'].").change();";
-            $output .= "\n";
-        }
+// function to edit (with table)
+$output .= "\t";
+$output .= "/* EDIT FROM TABLE */";
+$output .= "\n";
+$output .= "\t";
+$output .= "$('#dt".$tableid." tbody').on('click', '.edit', function () {";
+$output .= "\n";
+$output .= "\t\t";
+$output .= "row".$formid." = ".$tableid.".row($(this).parents('tr'))";
+$output .= "\n";
+$output .= "\t\t";
+$output .= "var data = row".$formid.".data();";
+$output .= "\n";
+$output .= "\t\t";
+$output .= "k.get('".$format["model"]."', 'id', data['id'], function(response) {";
+$output .= "\n";
+// populate form with data
+foreach ($format['fields'] as $fields) {
+    foreach ($fields['row'] as $row) {
+        $output .= "\t\t\t";
+        $output .= "$('#".$formid.'_'.$row['name']."').val(response.data[0].".$row['name'].").change();";
+        $output .= "\n";
     }
-    // open modal
-    $output .= "\t\t\t";
-    $output .= "$('#modal".$formid."').modal('show');";
-    $output .= "\n";
-    $output .= "\t\t";
-    $output .= "}, function(response) { /* error callback function */ });";
-    $output .= "\n";
-    $output .= "\t";
-    $output .= "});";
-    $output .= "\n\n\n";
-
-    // function to delete (with table)
-    $output .= "\t";
-    $output .= "/* DELETE FROM TABLE */";
-    $output .= "\n";
-    $output .= "\t";
-    $output .= "$('#dt".$tableid." tbody').on('click', '.delete', function () {";
-    $output .= "\n";
-    $output .= "\t\t";
-    $output .= "var data = ".$tableid.".row($(this).parents('tr')).data();";
-    $output .= "\n";
-    $output .= "\t\t";
-    $output .= "k.confirm('Delete', 'Are you sure you wish to perform the delete operation', 'warning', function() {";
-    $output .= "\n";
-    $output .= "\t\t\t";
-    $output .= "k.delete('".$format["model"]."', 'id', data['id'], function() { /* callback function */ }, function(response) { /* error callback function */ } );";
-    $output .= "\n";
-    $output .= "\t\t";
-    $output .= "});";
-    $output .= "\n";
-    $output .= "\t";
-    $output .= "});";
-    $output .= "\n\n\n";
 }
+// open modal
+$output .= "\t\t\t";
+$output .= "$('#form".$formid."').data('objidx', data['id']);";
+$output .= "\n";
+$output .= "\t\t\t";
+$output .= "$('#modal".$formid."').modal('show');";
+$output .= "\n";
+$output .= "\t\t";
+$output .= "}, function(response) { k.alert('Error', 'Error message：'+response, 'error', 0); /* error callback function */ });";
+$output .= "\n";
+$output .= "\t";
+$output .= "});";
+$output .= "\n\n\n";
+
+// function to delete (with table)
+$output .= "\t";
+$output .= "/* DELETE FROM TABLE */";
+$output .= "\n";
+$output .= "\t";
+$output .= "$('#dt".$tableid." tbody').on('click', '.delete', function () {";
+$output .= "\n";
+$output .= "\t\t";
+$output .= "row".$formid." = ".$tableid.".row($(this).parents('tr'))";
+$output .= "\n";
+$output .= "\t\t";
+$output .= "var data = row".$formid.".data();";
+$output .= "\n";
+$output .= "\t\t";
+$output .= "k.confirm('Delete', 'Are you sure you wish to perform the delete operation', 'warning', function() {";
+$output .= "\n";
+$output .= "\t\t\t";
+$output .= "k.delete('".$format["model"]."', 'id', data['id'], function() { row".$formid.".remove().draw(); /* callback function */ }, function(response) { k.alert('Error', 'Error message：'+response, 'error', 0); /* error callback function */ } );";
+$output .= "\n";
+$output .= "\t\t";
+$output .= "});";
+$output .= "\n";
+$output .= "\t";
+$output .= "});";
+$output .= "\n\n\n";
 
 $output .= "});";
 $output .= "\n";
