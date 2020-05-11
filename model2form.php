@@ -269,7 +269,7 @@ file_put_contents($format["model"].'.html', $output);
 
 /********************** JAVASCRIPT */
 
-$output .= "var row".$formid.";";
+$output = "var row".$formid.";";
 $output .= "\n\n";
 $output .= "$(document).ready(function() { ";
 $output .= "\n\n";
