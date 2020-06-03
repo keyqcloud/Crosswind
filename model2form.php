@@ -183,7 +183,7 @@ foreach ($format['fields'] as $fields) {
 
                 // open select tag
                 $output .= "\t\t\t\t";
-                $output .= '<select id="'.$formid.'_'.$row['name'].'" class="mdb-select">';
+                $output .= '<select id="'.$formid.'_'.$row['name'].'" class="browser-default custom-select" name="'.$row['name'].'">';
                 $output .= "\n";
 
                 foreach ($row['select'] as $option) {
@@ -203,13 +203,17 @@ foreach ($format['fields'] as $fields) {
                 $output .= '</select>';
                 $output .= "\n";
 
+            } elseif (isset($row['checkbox'])) {
+                $output .= "\t\t\t\t";
+                $output .= '<input type="checkbox" id="'.$formid.'_'.$row['name'].'" class="form-check-input" name="'.$row['name'].'" value="'.$row['checkbox'].'">';
+                $output .= "\n";
             } elseif (isset($row['password'])) {
                 $output .= "\t\t\t\t";
                 $output .= '<input type="password" id="'.$formid.'_'.$row['name'].'" class="form-control" name="'.$row['name'].'"'.($$model['struct'][$row['name']]['required'] ? ' required="required"' : '').'>';
                 $output .= "\n";
             } else {
                 $output .= "\t\t\t\t";
-                $output .= '<input type="text" id="'.$formid.'_'.$row['name'].'" class="form-control" name="'.$row['name'].'"'.($$model['struct'][$row['name']]['required'] ? ' required="required"' : '').'>';
+                $output .= '<input type="text" id="'.$formid.'_'.$row['name'].'" class="form-control'.($$model['struct'][$row['name']]['date'] ? ' datepicker' : '').'" name="'.$row['name'].'"'.($$model['struct'][$row['name']]['required'] ? ' required="required"' : '').'>';
                 $output .= "\n";
             }
         }
@@ -274,11 +278,6 @@ $output .= "\n\n";
 $output .= "$(document).ready(function() { ";
 $output .= "\n\n";
 
-// use material select for the options - is ignored if mdb is not supported
-$output .= "\t";
-$output .= "$('.mdb-select').materialSelect();";
-$output .= "\n\n\n";
-
 // function to open modal
 $output .= "\t";
 $output .= "/* OPEN MODAL FOR CREATE NEW */";
@@ -329,6 +328,9 @@ $output .= "\t\t";
 $output .= "if (valid) {";
 $output .= "\n";
 $output .= "\t\t\t";
+$output .=  "$('#loadingModal').modal('show');";
+$output .= "\n";
+$output .= "\t\t\t";
 $output .= "if ($('#form".$formid."').data('objidx')) {";
 $output .= "\n";
 $output .= "\t\t\t\t";
@@ -339,6 +341,9 @@ $output .= "/* callback function */";
 $output .= "\n";
 $output .= "\t\t\t\t\t";
 $output .= "row".$formid.".data(response.data).draw();";
+$output .= "\n";
+$output .= "\t\t\t\t\t";
+$output .=  "$('#loadingModal').modal('hide');";
 $output .= "\n";
 $output .= "\t\t\t\t\t";
 $output .= "$('#modal".$formid."').modal('hide');";
@@ -354,6 +359,9 @@ $output .= "/* error callback function */";
 $output .= "\n";
 $output .= "\t\t\t\t\t";
 $output .= "k.alert('Error', 'Error message：'+response, 'error', 0);";
+$output .= "\n";
+$output .= "\t\t\t\t\t";
+$output .=  "$('#loadingModal').modal('hide');";
 $output .= "\n";
 $output .= "\t\t\t\t";
 $output .= "});";
@@ -371,6 +379,9 @@ $output .= "\t\t\t\t\t";
 $output .= $tableid.".row.add(response.data).draw();";
 $output .= "\n";
 $output .= "\t\t\t\t\t";
+$output .=  "$('#loadingModal').modal('hide');";
+$output .= "\n";
+$output .= "\t\t\t\t\t";
 $output .= "$('#modal".$formid."').modal('hide');";
 $output .= "\n";
 $output .= "\t\t\t\t\t";
@@ -385,6 +396,9 @@ $output .= "\n";
 $output .= "\t\t\t\t\t";
 $output .= "k.alert('Error', 'Error message：'+response, 'error', 0);";
 $output .= "\n";
+$output .= "\t\t\t\t\t";
+$output .=  "$('#loadingModal').modal('hide');";
+$output .= "\n";
 $output .= "\t\t\t\t";
 $output .= "});";
 $output .= "\n";
@@ -398,61 +412,15 @@ $output .= "\t";
 $output .= "});";
 $output .= "\n\n\n";
 
-// function to edit
-$output .= "\t";
-$output .= "/* EDIT */";
-$output .= "\n";
-$output .= "\t";
-$output .= "$('#edit".$format["model"]."').click( function () {";  
-$output .= "\n";
-$output .= "\t\t";
-$output .= "k.get('".$format["model"]."', 'id', $('#form".$formid."').data('objidx'), function(data) {";
-$output .= "\n";
-// populate form with data
-foreach ($format['fields'] as $fields) {
-    foreach ($fields['row'] as $row) {
-        $output .= "\t\t\t";
-        $output .= "$('#".$formid.'_'.$row['name']."').val(response.data[0].".$row['name'].").change();";
-        $output .= "\n";
-    }
-}
-// open modal
-$output .= "\t\t\t";
-$output .= "$('#modal".$formid."').modal('show');";
-$output .= "\n";
-$output .= "\t\t";
-$output .= "}, function(response) { /* error callback function */ });";
-$output .= "\n";
-$output .= "\t";
-$output .= "});";
-$output .= "\n\n\n";
-
-// function to delete
-$output .= "\t";
-$output .= "/* DELETE */";
-$output .= "\n";
-$output .= "\t";
-$output .= "$('#delete".$format["model"]."').click( function () {";    
-$output .= "\n";
-$output .= "\t\t";
-$output .= "k.confirm('Delete', 'Are you sure you wish to perform the delete operation', 'warning', function() {";
-$output .= "\n";
-$output .= "\t\t\t";
-$output .= "k.delete('".$format["model"]."', 'id', $('#form".$formid."').data('objidx'), function() { /* callback function */ }, function(response) { /* error callback function */ } );";
-$output .= "\n";
-$output .= "\t\t";
-$output .= "});";
-$output .= "\n";
-$output .= "\t";
-$output .= "});";
-$output .= "\n\n\n";
-
 // function to edit (with table)
 $output .= "\t";
 $output .= "/* EDIT FROM TABLE */";
 $output .= "\n";
 $output .= "\t";
 $output .= "$('#dt".$tableid." tbody').on('click', '.edit', function () {";
+$output .= "\n";
+$output .= "\t\t";
+$output .=  "$('#loadingModal').modal('show');";
 $output .= "\n";
 $output .= "\t\t";
 $output .= "row".$formid." = ".$tableid.".row($(this).parents('tr'))";
@@ -476,10 +444,25 @@ $output .= "\t\t\t";
 $output .= "$('#form".$formid."').data('objidx', data['id']);";
 $output .= "\n";
 $output .= "\t\t\t";
+$output .=  "$('#loadingModal').modal('hide');";
+$output .= "\n";
+$output .= "\t\t\t";
 $output .= "$('#modal".$formid."').modal('show');";
 $output .= "\n";
 $output .= "\t\t";
-$output .= "}, function(response) { k.alert('Error', 'Error message：'+response, 'error', 0); /* error callback function */ });";
+$output .= "}, function(response) {";
+$output .= "\n";
+$output .= "\t\t\t";
+$output .= "/* error callback function */";
+$output .= "\n";
+$output .= "\t\t\t";
+$output .= "k.alert('Error', 'Error message：'+response, 'error', 0);";
+$ouptut .= "\n";
+$output .= "\t\t\t";
+$output .= "$('#loadingModal').modal('hide');";
+$output .= "\n";
+$output .= "\t\t";
+$output .= "});";
 $output .= "\n";
 $output .= "\t";
 $output .= "});";
@@ -502,7 +485,34 @@ $output .= "\t\t";
 $output .= "k.confirm('Delete', 'Are you sure you wish to perform the delete operation', 'warning', function() {";
 $output .= "\n";
 $output .= "\t\t\t";
-$output .= "k.delete('".$format["model"]."', 'id', data['id'], function() { row".$formid.".remove().draw(); /* callback function */ }, function(response) { k.alert('Error', 'Error message：'+response, 'error', 0); /* error callback function */ } );";
+$output .=  "$('#loadingModal').modal('show');";
+$output .= "\n";
+$output .= "\t\t\t";
+$output .= "k.delete('".$format["model"]."', 'id', data['id'], function() {";
+$output .= "\n";
+$output .= "\t\t\t\t";
+$output .= "/* callback function */";
+$output .= "\n";
+$output .= "\t\t\t\t";
+$output .= "row".$formid.".remove().draw();";
+$output .= "\n";
+$output .= "\t\t\t\t";
+$output .=  "$('#loadingModal').modal('hide');";
+$output .= "\n";
+$output .= "\t\t\t";
+$output .= "}, function(response) {";
+$output .= "\n";
+$output .= "\t\t\t\t";
+$output .= "/* error callback function */";
+$output .= "\n";
+$output .= "\t\t\t\t";
+$output .= "k.alert('Error', 'Error message：'+response, 'error', 0);";
+$output .= "\n";
+$output .= "\t\t\t\t";
+$output .=  "$('#loadingModal').modal('hide');";
+$output .= "\n";
+$output .= "\t\t\t";
+$output .= "});";
 $output .= "\n";
 $output .= "\t\t";
 $output .= "});";

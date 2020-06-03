@@ -4,18 +4,18 @@
 function print_usage() {
 	echo "\n";
 	echo "\033[1mUSAGE\033[0m\n\n";
-	echo "model2dt.php \033[1m--modeldir\033[0m \e[0;31m/path/to/kyte/model\e[0m\n\n";
+	echo "model2dt.php \033[1m--model\033[0m \e[0;31m/path/to/kyte/model\e[0m\n\n";
 	echo "Will create generic data tables that may require further customization\n\n";
 	exit(-1);
 }
 
 $longopts  = array(
-    "modeldir:",
+    "model:",
     "lang:",
 );
 $options = getopt(null, $longopts);
 
-if (!array_key_exists('modeldir', $options)) print_usage();
+if (!array_key_exists('model', $options)) print_usage();
 $lang = '';
 if (isset($options['lang'])) {
     switch ($options['lang']) {
@@ -28,10 +28,10 @@ if (isset($options['lang'])) {
             break;
     }
 }
-$path = $options['modeldir'];
+$path = $options['model'];
 
 // check if dirs exists for each of the models
-if ( !file_exists( $path ) && !is_dir( $path ) ) {
+if ( !file_exists( $path ) ) {
 	echo "\n";
 	echo "\e[0;31m\033[1mUnable to find $path.\033[0m\n";
 	print_usage();
@@ -39,14 +39,23 @@ if ( !file_exists( $path ) && !is_dir( $path ) ) {
 
 $models = [];
 
-// load models
-foreach (glob("$path/*.php") as $filename) {
-    require_once($filename);
-    $model_name = substr($filename, 0, strrpos($filename, "."));
+
+if (!is_dir( $path )) {
+    require_once($path);
+    $model_name = substr($path, 0, strrpos($path, "."));
     $model_name = explode('/', $model_name);
     $model_name = end($model_name);
-    if (!in_array($model_name, $models)) {
-        $models[] = $model_name;
+    $models[] = $model_name;
+} else {
+    // load models
+    foreach (glob("$path/*.php") as $filename) {
+        require_once($filename);
+        $model_name = substr($filename, 0, strrpos($filename, "."));
+        $model_name = explode('/', $model_name);
+        $model_name = end($model_name);
+        if (!in_array($model_name, $models)) {
+            $models[] = $model_name;
+        }
     }
 }
 
