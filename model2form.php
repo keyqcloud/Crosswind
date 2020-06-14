@@ -4,7 +4,7 @@
 function print_usage() {
 	echo "\n";
 	echo "\033[1mUSAGE\033[0m\n\n";
-	echo "model2dt.php \033[1m--format\033[0m \e[0;31m/path/to/json/format\e[0m \033[1m--model\033[0m \e[0;31m/path/to/kyte/model\e[0m \033[1m--table\033[0m \e[0;31mID of table\e[0m\n\n";
+	echo "model2dt.php \033[1m--format\033[0m \e[0;31m/path/to/json/format\e[0m \033[1m--model\033[0m \e[0;31m/path/to/kyte/model\e[0m\n\n";
 	echo "Will create modal forms and their ajax functions - customization may be required\n\n";
 	exit(-1);
 }
@@ -12,17 +12,14 @@ function print_usage() {
 $longopts  = array(
     "format:",
     "model:",
-    "table:",
 );
 $options = getopt(null, $longopts);
 
 if (!array_key_exists('format', $options)) print_usage();
 if (!array_key_exists('model', $options)) print_usage();
-if (!array_key_exists('table', $options)) print_usage();
 
 $path['format'] = $options['format'];
 $path['model'] = $options['model'];
-$tableid = $options['table'];
 
 
 // check if file exists
@@ -113,6 +110,7 @@ $format = json_decode(file_get_contents($path['format']), true);
 
 // generate form id
 $formid = $format["model"].'_'.uniqid();
+$tableid = $format['table_id'];
 
 // to be able to demo the html file directly
 $output = '<!DOCTYPE html><html lang="en" class="mdb-color"><head> <meta charset="utf-8"> <meta name="google" content="notranslate"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <meta http-equiv="x-ua-compatible" content="ie=edge"> <title>Kyte Form Output</title> <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css"> <link href="https://cdn.keyq.cloud/css/bootstrap.min.css" rel="stylesheet"> <link href="https://cdn.keyq.cloud/css/mdb.min.css" rel="stylesheet"> <link href="https://cdn.keyq.cloud/css/addons/datatables.min.css" rel="stylesheet"> <link href="https://cdn.keyq.cloud/css/addons/datatables-select.min.css" rel="stylesheet"><script type="text/javascript" src="https://cdn.keyq.cloud/js/jquery.min.js"></script> <script type="text/javascript" src="https://cdn.keyq.cloud/js/popper.min.js"></script> <script type="text/javascript" src="https://cdn.keyq.cloud/js/bootstrap.min.js"></script> <script type="text/javascript" src="https://cdn.keyq.cloud/js/addons/datatables.min.js"></script> <script type="text/javascript" src="https://cdn.keyq.cloud/js/addons/datatables-select.min.js"></script> <script type="text/javascript" src="https://cdn.keyq.cloud/js/mdb.min.js"></script> <script type="text/javascript" src="https://cdn.keyq.cloud/js/ajaxzip3.js"></script> <script type="text/javascript" src="https://cdn.keyq.cloud/js/formvalidation.js"></script> <script type="text/javascript" src="'.$format["model"].'.js"></script></head><body>';
