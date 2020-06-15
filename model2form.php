@@ -67,6 +67,7 @@ $model = end($model);
 $format = json_decode(file_get_contents($path['format']), true);
 // {
 //     "model":"ModelName",                             <---- Name of model (future todo is to allow abstract models)
+//     "table_id":"ModelName_abc123",                   <---- Name of model (future todo is to allow abstract models)
 //     "fields":[                                       <---- form fields are created using bootstrap grid
 //         {
 //             "row": [
