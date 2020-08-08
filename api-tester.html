@@ -1,0 +1,122 @@
+<html>
+    <head>
+        <title>Kyte API Tester</title>
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+        <script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+        <script type="text/javascript" src="https://cdn.api.keyq.cloud/kyte/current/kyte.api.js"></script>
+    </head>
+    <body>
+        <!-- Page loading modal.  Once session is validated, the loading modal will close. -->
+        <div id="pageLoaderModal" class="modal white" data-backdrop="static" data-keyboard="false" tabindex="-1">
+            <div class="modal-dialog modal-sm h-100 d-flex">
+                <div class="mx-auto align-self-center" style="width: 48px">
+                    <div class="spinner-wrapper text-center fa-6x"><span class="fas fa-sync fa-spin"></span></div>
+                </div>
+            </div>
+        </div>
+        <h1 class="h1-responsive">Kyte API Tester</h1>
+        <div class="row">
+            <div class="col-md-2">Endpoint:</div>
+            <div class="col-md-auto"><input type="text" id="apiEndpoint" /></div>
+        </div>
+        <div class="row">
+            <div class="col-md-2">Identity:</div>
+            <div class="col-md-auto"><input type="text" id="apiIdentityKey" /></div>
+            <div class="col-md-2">Public Key:</div>
+            <div class="col-md-auto"><input type="text" id="apiPublicKey" /></div>
+        </div>
+        <div class="row">
+            <div class="col-md"><button id="initAPI">Init API</button></div>
+        </div>
+
+        <hr class="hr-primary" />
+
+        <h1 id="status"></h1>
+
+        <hr class="hr-primary" />
+        
+        <div class="row">
+            <div class="col-md-2">Method:</div>
+            <div class="col-md-auto">
+                <select id="apiMethod">
+                    <option value="GET">GET</option>
+                    <option value="POST" disabled="disabled">POST</option>
+                    <option value="PUT" disabled="disabled">PUT</option>
+                    <option value="DELETE" disabled="disabled">DELETE</option>
+                </select>
+            </div>
+            <div class="col-md-2">Model:</div>
+            <div class="col-md-auto"><input type="text" id="apiModel" /></div>
+            <div class="col-md-2">Field:</div>
+            <div class="col-md-auto"><input type="text" id="apiField" /></div>
+            <div class="col-md-2">Value:</div>
+            <div class="col-md-auto"><input type="text" id="apiValue" /></div>
+        </div>
+        <div class="row">
+            <div class="col-md"><button id="apiSend">Send</button></div>
+        </div>
+
+        <hr class="hr-primary" />
+
+        <div id="output"></div>
+    </body>
+    <script>
+    var k;
+    var apiReady;
+
+    $(document).ready(function () {
+        $("#initAPI").click(function() {
+            apiReady = true;
+            if ($("#apiEndpoint").val() == '' || $("#apiIdentityKey").val() == '' || $("#apiPublicKey").val() == '') {
+                alert('API Endpoint, identity and key must not be empty');
+                $("#status").html('FAILED');
+                $("#status").addClass('text-danger');
+                $("#status").removeClass('text-success');
+                apiReady = false;
+            }
+            if (apiReady) {
+                k = new Kyte($("#apiEndpoint").val(), $("#apiPublicKey").val(), $("#apiIdentityKey").val());
+                k.init();
+                $("#status").html('READY');
+                $("#status").addClass('text-success');
+                $("#status").removeClass('text-danger');
+            }
+        });
+        $("#apiSend").click(function() {
+            if (apiReady) {
+                let ready = true;
+                if ($("#apiModel").val() == '') {
+                    alert('Model cannot be empty');
+                }
+                if (ready) {
+                    $('#pageLoaderModal').modal('show');
+                    let method = $("#apiMethod").val();
+                    if (method == 'GET') {
+                        k.get($("#apiModel").val(), $("#apiField").val(), $("#apiValue").val(), function (response) {
+                            // success response
+                            $("#output").html(JSON.stringify(response, undefined, 2));
+                            $('#pageLoaderModal').modal('hide');
+                        }, function (response) {
+                            // error response
+                            $("#output").html(JSON.stringify(response, undefined, 2));
+                            $('#pageLoaderModal').modal('hide');
+                        });
+                    } else if (method == 'POST') {
+                        // POST
+                    } else if (method == 'PUT') {
+                        // PUT
+                    } else if (method == 'DELETE') {
+                        // DELETE
+                    } else {
+                        alert('Unknown method');
+                    }
+                }
+            } else {
+                alert('Please initialize the API first');
+            }
+        });
+    });
+    </script>
+</html>
