@@ -156,6 +156,7 @@ foreach ($models as $model) {
 
 		$output .= ";\n";
 	}
+	$output .= "\n";
 }
 
 file_put_contents('update_charset_collate.sql', $output);
