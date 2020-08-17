@@ -100,7 +100,7 @@ foreach ($models as $model) {
 			continue;
 		}
 
-		if ($attrs['type'] != 's') {
+		if ($attrs['type'] != 's' || $attrs['date']) {
 			continue;
 		}
 
@@ -128,20 +128,16 @@ foreach ($models as $model) {
 		$output .= "ALTER TABLE `$tbl_name` CHANGE `$name` `$name`";	// column name column_name
 
 		// type, size and if signed or not
-		if ($attrs['date']) {
-			$output .= ' bigint unsigned';
+		if ($type_text) {
+			$output .= ' text';
 		} else {
-			if ($type_text) {
-				$output .= ' text';
+			$output .= ' varchar';
+			if (array_key_exists('size', $attrs)) {
+				$output .= '('.$attrs['size'].')';
 			} else {
-				$output .= ' varchar';
-				if (array_key_exists('size', $attrs)) {
-					$output .= '('.$attrs['size'].')';
-				} else {
-					echo "\n";
-					echo "\e[0;31m\033[1mvarchar requires size to be declared for column $name of table $tbl_name.\033[0m\n";
-					print_usage();
-				}
+				echo "\n";
+				echo "\e[0;31m\033[1mvarchar requires size to be declared for column $name of table $tbl_name.\033[0m\n";
+				print_usage();
 			}
 		}
 		
