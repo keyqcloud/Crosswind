@@ -167,6 +167,6 @@ foreach ($models as $model) {
 	}
 }
 
-if (!$isSep) file_put_contents('update_charset_collate.sql', $output);
+file_put_contents('update_charset_collate.sql', $output);
 
 ?>
