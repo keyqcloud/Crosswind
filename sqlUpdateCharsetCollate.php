@@ -100,6 +100,10 @@ foreach ($models as $model) {
 			continue;
 		}
 
+		if ($attrs['type'] != 's') {
+			continue;
+		}
+
 		// check if required attrs are set
 		if (!isset($attrs['date'])) {
 			echo "\n";
@@ -130,40 +134,25 @@ foreach ($models as $model) {
 			if ($type_text) {
 				$output .= ' text';
 			} else {
-				if ($attrs['type'] == 'i') {
-					$output .= ' int';
-					if (array_key_exists('size', $attrs)) {
-						$output .= '('.$attrs['size'].')';
-					}
-					if (array_key_exists('unsigned', $attrs)) {
-						$output .= ' unsigned';
-					}
-				} elseif ($attrs['type'] == 's') {
-					$output .= ' varchar';
-					if (array_key_exists('size', $attrs)) {
-						$output .= '('.$attrs['size'].')';
-					} else {
-						echo "\n";
-						echo "\e[0;31m\033[1mvarchar requires size to be declared for column $name of table $tbl_name.\033[0m\n";
-						print_usage();
-					}
-				} elseif ($attrs['type'] == 'd' && array_key_exists('precision', $attrs) && array_key_exists('scale', $attrs)) {
-					$output .= ' decimal('.$attrs['precision'].','.$attrs['scale'].')';
+				$output .= ' varchar';
+				if (array_key_exists('size', $attrs)) {
+					$output .= '('.$attrs['size'].')';
 				} else {
 					echo "\n";
-					echo "\e[0;31m\033[1mUnknown type ".$attrs['type']." for column $name of table $tbl_name.\033[0m\n";
+					echo "\e[0;31m\033[1mvarchar requires size to be declared for column $name of table $tbl_name.\033[0m\n";
 					print_usage();
 				}
 			}
 		}
+		
+		$output .= " CHARACTER SET $charset COLLATE $collate;\n";
+
 		if (array_key_exists('default', $attrs)) {
 			// default value?
 			$output .= ' DEFAULT ';
 			$output .= (is_string($attrs['default']) ? "'".$attrs['default']."'" : $attrs['default']);
 		}
 		$output .= ($attrs['required'] ? ' NOT NULL' : '');		// required?
-		
-		$output .= " CHARACTER SET $charset COLLATE $collate;\n";
 	}
 }
 
