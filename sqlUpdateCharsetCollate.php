@@ -145,7 +145,7 @@ foreach ($models as $model) {
 			}
 		}
 		
-		$output .= " CHARACTER SET $charset COLLATE $collate;\n";
+		$output .= " CHARACTER SET $charset COLLATE $collate";
 
 		if (array_key_exists('default', $attrs)) {
 			// default value?
@@ -153,6 +153,8 @@ foreach ($models as $model) {
 			$output .= (is_string($attrs['default']) ? "'".$attrs['default']."'" : $attrs['default']);
 		}
 		$output .= ($attrs['required'] ? ' NOT NULL' : '');		// required?
+
+		$output .= ";\n";
 	}
 }
 
