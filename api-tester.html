@@ -36,6 +36,25 @@
         <h1 id="status"></h1>
 
         <hr class="hr-primary" />
+
+        <h1 class="h1-responsive">Session</h1>
+        <div class="row">
+            <div class="col-md-2">Email:</div>
+            <div class="col-md-auto"><input type="text" id="sessionEmail" /></div>
+        </div>
+        <div class="row">
+            <div class="col-md-2">Password:</div>
+            <div class="col-md-auto"><input type="text" id="sessionPassword" /></div>
+        </div>
+        <div class="row">
+            <div class="col-md"><button id="sessionLogin">Login</button></div>
+        </div>
+
+        <hr class="hr-primary" />
+
+        <h1 id="sessionStatus"></h1>
+
+        <hr class="hr-primary" />
         
         <div class="row">
             <div class="col-md-2">Method:</div>
@@ -84,11 +103,45 @@
                 $("#status").removeClass('text-danger');
             }
         });
+        $("#sessionLogin").click(function() {
+            if (apiReady) {
+                let ready = true;
+                if ($("#sessionEmail").val() == '') {
+                    alert('Email cannot be empty');
+                    ready = false;
+                }
+
+                if ($("#sessionPassword").val() == '') {
+                    alert('Email cannot be empty');
+                    ready = false;
+                }
+
+
+                if (ready) {
+                    $('#pageLoaderModal').modal('show');
+                    k.sessionCreate({ 'email': $("#sessionEmail").val(), 'password': $("#sessionPassword").val() },
+                        function (response) {
+                            $("#sessionStatus").html('READY');
+                            $("#sessionStatus").addClass('text-success');
+                            $("#sessionStatus").removeClass('text-danger');
+                            $('#pageLoaderModal').modal('hide');
+                        },
+                        function (response) {
+                            $("#sessionStatus").html('FAILED');
+                            $("#sessionStatus").addClass('text-danger');
+                            $("#sessionStatus").removeClass('text-success');
+                            $('#pageLoaderModal').modal('hide');
+                        }
+                    );
+                }
+            }
+        });
         $("#apiSend").click(function() {
             if (apiReady) {
                 let ready = true;
                 if ($("#apiModel").val() == '') {
                     alert('Model cannot be empty');
+                    ready = false;
                 }
                 if (ready) {
                     $('#pageLoaderModal').modal('show');
