@@ -61,17 +61,23 @@
             <div class="col-md-auto">
                 <select id="apiMethod">
                     <option value="GET">GET</option>
-                    <option value="POST" disabled="disabled">POST</option>
-                    <option value="PUT" disabled="disabled">PUT</option>
-                    <option value="DELETE" disabled="disabled">DELETE</option>
+                    <option value="POST">POST</option>
+                    <option value="PUT">PUT</option>
+                    <option value="DELETE">DELETE</option>
                 </select>
             </div>
             <div class="col-md-2">Model:</div>
             <div class="col-md-auto"><input type="text" id="apiModel" /></div>
+        </div>
+        <div class="row">
             <div class="col-md-2">Field:</div>
             <div class="col-md-auto"><input type="text" id="apiField" /></div>
             <div class="col-md-2">Value:</div>
             <div class="col-md-auto"><input type="text" id="apiValue" /></div>
+        </div>
+        <div class="row">
+            <div class="col-md-2">Data:</div>
+            <div class="col-md-auto"><textarea id="apiData"></textarea></div>
         </div>
         <div class="row">
             <div class="col-md"><button id="apiSend">Send</button></div>
@@ -158,10 +164,37 @@
                         });
                     } else if (method == 'POST') {
                         // POST
+                        k.post($("#apiModel").val(), $("#apiData").val(), null, function (response) {
+                            // success response
+                            $("#output").html(JSON.stringify(response, undefined, 2));
+                            $('#pageLoaderModal').modal('hide');
+                        }, function (response) {
+                            // error response
+                            $("#output").html(JSON.stringify(response, undefined, 2));
+                            $('#pageLoaderModal').modal('hide');
+                        });
                     } else if (method == 'PUT') {
                         // PUT
+                        k.put($("#apiModel").val(), $("#apiField").val(), $("#apiValue").val(), $("#apiData").val(), null, function (response) {
+                            // success response
+                            $("#output").html(JSON.stringify(response, undefined, 2));
+                            $('#pageLoaderModal').modal('hide');
+                        }, function (response) {
+                            // error response
+                            $("#output").html(JSON.stringify(response, undefined, 2));
+                            $('#pageLoaderModal').modal('hide');
+                        });
                     } else if (method == 'DELETE') {
                         // DELETE
+                        k.delete($("#apiModel").val(), $("#apiField").val(), $("#apiValue").val(), function (response) {
+                            // success response
+                            $("#output").html(JSON.stringify(response, undefined, 2));
+                            $('#pageLoaderModal').modal('hide');
+                        }, function (response) {
+                            // error response
+                            $("#output").html(JSON.stringify(response, undefined, 2));
+                            $('#pageLoaderModal').modal('hide');
+                        });
                     } else {
                         alert('Unknown method');
                     }
