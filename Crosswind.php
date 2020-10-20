@@ -43,7 +43,7 @@ if (!file_exists($crosswind_env['kyte_dir'].'config.php')) {
     echo "Missing configuration file.  Please create a configuration file with path ".$crosswind_env['kyte_dir'].'config.php';
     exit(-1);
 }
-require_once($crosswind_env['kyte_dir'].'config.php');
+require_once($crosswind_env['kyte_dir'].'bootstrap.php');
 
 // init db
 // init account
