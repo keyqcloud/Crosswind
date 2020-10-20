@@ -5,47 +5,11 @@ namespace Crosswind;
 
 class Database {
 
-	public function create_tables($charset, $engine, $path) {
-		$models = [];
+	public static function create_tables($charset, $engine) {
 		$sqls = [];
 	
-		$builtin_models = $path."builtin/models";
-		$user_models = $path."app/models";
-	
-		// check if dirs exists for each of the models
-		if ( !file_exists( $builtin_models ) && !is_dir( $builtin_models ) ) {
-			echo "\n";
-			echo "\e[0;31m\033[1mUnable to find $builtin_models.\033[0m\n";
-			exit(-1);
-		}
-	
-		// include models being used by app
-		foreach (glob("$builtin_models/*.php") as $filename) {
-			require_once($filename);
-			$model_name = substr($filename, 0, strrpos($filename, "."));
-			$model_name = explode('/', $model_name);
-			$model_name = end($model_name);
-			if (!in_array($model_name, $models)) {
-				$models[] = $model_name;
-			}
-		}
-	
-		/* Load user-defined files */
-		if ( file_exists( $user_models ) && is_dir( $user_models ) ) {
-			// load user defined models and controllers (allow override of builtin)
-			foreach (glob("$user_models/*.php") as $filename) {
-				require_once($filename);
-				$model_name = substr($filename, 0, strrpos($filename, "."));
-				$model_name = explode('/', $model_name);
-				$model_name = end($model_name);
-				if (!in_array($model_name, $models)) {
-					$models[] = $model_name;
-				}
-			}
-		}
-
 		// iterate through each model and create sql table
-		foreach ($models as $model) {
+		foreach (KYTE_MODELS as $model) {
 			$tbl_name = $$model['name'];
 			$cols = $$model['struct'];
 			$pk_name = '';	// store col struct for primary key
