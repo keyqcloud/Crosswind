@@ -1,0 +1,80 @@
+#!/usr/bin/env php
+<?php
+
+define('KYTE_STDIN', fopen("php://stdin","rb"));
+define('KYTE_CROSSWIND_ENV', "~/.kytecrosswind")
+
+if (PHP_SAPI !== 'cli' && PHP_SAPI !== 'phpdbg') {
+    echo 'Warning: Crosswind should be invoked via the CLI version of PHP, not the '.PHP_SAPI.' SAPI'.PHP_EOL;
+}
+
+setlocale(LC_ALL, 'C');
+
+// check if .kytecrosswind exists
+if (!file_exists( KYTE_CROSSWIND_ENV )) {
+    echo "Thank you for installing Crosswind to get your Kyte application up in to the sky.\n";
+    echo "First, we need some information to configure your Crosswind environment.\n\n";
+    echo "Where is your Kyte application located? (/var/www/html/): ";
+    $crosswind_env['kyte_dir'] = fgets(KYTE_STDIN);
+
+    echo "\n\nExcellent, next what is the DB engine? (InnoDB): ";
+    $crosswind_env['db_engine'] = fgets(KYTE_STDIN);
+
+    echo "\n\nPerfect, and one last, what is the charset? (utf8): ";
+    $crosswind_env['db_charset'] = fgets(KYTE_STDIN);
+
+    echo "\n\nAweseome! Your answers have been saved in ".KYTE_CROSSWIND_ENV." so you won't have to keep typing them\n";
+
+    $config_content = <<<EOT
+#!/usr/bin/env php
+<?php
+    \$crosswind_env['kyte_dir'] = '$crosswind_env['kyte_dir']';
+    \$crosswind_env['db_engine'] = '$crosswind_env['db_engine']';
+    \$crosswind_env['db_charset'] = '$crosswind_env['db_charset']';
+EOT;
+
+    // write config file
+    file_put_contents(KYTE_CROSSWIND_ENV, $config_content);
+} else {
+    require_once(KYTE_CROSSWIND_ENV);
+}
+
+if (!file_exists($crosswind_env['kyte_dir'].'config.php')) {
+    echo "Missing configuration file.  Please create a configuration file with path ".$crosswind_env['kyte_dir'].'config.php';
+    exit(-1);
+}
+require_once($crosswind_env['kyte_dir'].'config.php');
+
+// init db
+// init account
+if (isset($argv[1], $argv[2]) ) {
+
+    // init db
+    if ($argv[1] == 'init' && $argv[2] == 'db') {
+        // create db connection sh for convenience
+        $content = <<<EOT
+#!/usr/bin/bash
+mysql -u%s -p%s -h%s %s
+EOT;
+
+        file_put_contents('~/dbconnect.sh', sprintf($content, KYTE_DB_USERNAME, KYTE_DB_PASSWORD, KYTE_DB_HOST, KYTE_DB_DATABASE));
+        echo "Database connection bash script created (~/dbconnect.sh)\n";
+
+        echo "Initializing database...";
+        // check if database exists and if not create it
+        shell_exec(sprintf("mysql -u%, -p%s -h%s -e 'CREATE DATABASE IF NOT EXISTS %s;'", KYTE_DB_USERNAME, KYTE_DB_PASSWORD, KYTE_DB_HOST, KYTE_DB_DATABASE);
+        // TODO: Check return response
+        echo sprintf("database %s created\n", KYTE_DB_DATABASE);
+
+        echo "Creating tables...\n";
+
+        // create tables
+        shell_exec(sprintf("mysql -u%, -p%s -h%s %s < schema.sql", KYTE_DB_USERNAME, KYTE_DB_PASSWORD, KYTE_DB_HOST, KYTE_DB_DATABASE);
+        // TODO: check return response
+    }
+
+    // init account
+    if ($argv[1] == 'init' && $argv[2] == 'account') {
+
+    }
+}
