@@ -14,6 +14,8 @@ class Database {
 			$cols = $$model['struct'];
 			$pk_name = '';	// store col struct for primary key
 
+			echo "Creating table for $tbl_name...";
+
 			$tbl_sql = <<<EOT
 DROP TABLE IF EXISTS `$tbl_name`;
 CREATE TABLE `$tbl_name` (
@@ -108,6 +110,8 @@ EOT;
 EOT;
 
 			$sqls[$tbl_name] = $tbl_sql;
+
+			echo "OK\n";
 		}
 
 		return $sqls;
