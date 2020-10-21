@@ -29,9 +29,9 @@ if (!file_exists( KYTE_CROSSWIND_ENV )) {
     $config_content = <<<EOT
 #!/usr/bin/env php
 <?php
-    \$crosswind_env['kyte_dir'] = '$crosswind_env['kyte_dir']';
-    \$crosswind_env['db_engine'] = '$crosswind_env['db_engine']';
-    \$crosswind_env['db_charset'] = '$crosswind_env['db_charset']';
+    \$crosswind_env['kyte_dir'] = '{$crosswind_env['kyte_dir']}';
+    \$crosswind_env['db_engine'] = '{$crosswind_env['db_engine']}';
+    \$crosswind_env['db_charset'] = '{$crosswind_env['db_charset']}';
 EOT;
 
     // write config file
