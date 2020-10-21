@@ -118,11 +118,11 @@ EOT;
 
         $apiKey = new \Kyte\ModelObject(APIKey);
         if (!$apiKey->create([
-            'identifier' => $identifier
-            'public_key' => $public_key
-            'secret_key' => $secret_key
+            'identifier' => $identifier,
+            'public_key' => $public_key,
+            'secret_key' => $secret_key,
             'epoch' => $epoch,
-            'kyte_account' => $account_number
+            'kyte_account' => $account_number,
         ])) {
             echo "FAILED\n\n";
             exit(-1);
