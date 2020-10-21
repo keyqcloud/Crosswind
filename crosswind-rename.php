@@ -1,6 +1,7 @@
 #!/usr/bin/env php
 <?php
 
+// constants
 define('KYTE_STDIN', fopen("php://stdin","rb"));
 define('KYTE_CROSSWIND_ENV', "~/.kytecrosswind")
 
