@@ -27,7 +27,6 @@ if (!file_exists( KYTE_Gust_ENV )) {
     echo "\n\nAweseome! Your answers have been saved in ".KYTE_Gust_ENV." so you won't have to keep typing them\n";
 
     $config_content = <<<EOT
-#!/usr/bin/env php
 <?php
     \$Gust_env['kyte_dir'] = '{$Gust_env['kyte_dir']}';
     \$Gust_env['db_engine'] = '{$Gust_env['db_engine']}';
