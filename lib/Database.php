@@ -8,9 +8,10 @@ class Database {
 		$sqls = [];
 	
 		// iterate through each model and create sql table
-		foreach (KYTE_MODELS as $model) {
-			$tbl_name = $$model['name'];
-			$cols = $$model['struct'];
+		foreach (KYTE_MODELS as $modelName) {
+			$model = constant($modelName);
+			$tbl_name = $model['name'];
+			$cols = $model['struct'];
 			$pk_name = '';	// store col struct for primary key
 
 			echo "Creating table for $tbl_name...";
