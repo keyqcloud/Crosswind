@@ -16,13 +16,13 @@ if (!file_exists( KYTE_CROSSWIND_ENV )) {
     echo "Thank you for installing Crosswind to get your Kyte application up in to the sky.\n";
     echo "First, we need some information to configure your Crosswind environment.\n\n";
     echo "Where is your Kyte application located? (/var/www/html/): ";
-    $crosswind_env['kyte_dir'] = fgets(KYTE_STDIN);
+    $crosswind_env['kyte_dir'] = trim(fgets(KYTE_STDIN));
 
     echo "\n\nExcellent, next what is the DB engine? (InnoDB): ";
-    $crosswind_env['db_engine'] = fgets(KYTE_STDIN);
+    $crosswind_env['db_engine'] = trim(fgets(KYTE_STDIN));
 
     echo "\n\nPerfect, and one last, what is the charset? (utf8): ";
-    $crosswind_env['db_charset'] = fgets(KYTE_STDIN);
+    $crosswind_env['db_charset'] = trim(fgets(KYTE_STDIN));
 
     echo "\n\nAweseome! Your answers have been saved in ".KYTE_CROSSWIND_ENV." so you won't have to keep typing them\n";
 
