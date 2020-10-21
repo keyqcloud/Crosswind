@@ -3,48 +3,48 @@
 
 // constants
 define('KYTE_STDIN', fopen("php://stdin","rb"));
-define('KYTE_CROSSWIND_ENV', $_SERVER['HOME']."/.kytecrosswind");
+define('KYTE_Gust_ENV', $_SERVER['HOME']."/.kyteGust");
 
 if (PHP_SAPI !== 'cli' && PHP_SAPI !== 'phpdbg') {
-    echo 'Warning: Crosswind should be invoked via the CLI version of PHP, not the '.PHP_SAPI.' SAPI'.PHP_EOL;
+    echo 'Warning: Gust should be invoked via the CLI version of PHP, not the '.PHP_SAPI.' SAPI'.PHP_EOL;
 }
 
 setlocale(LC_ALL, 'C');
 
-// check if .kytecrosswind exists
-if (!file_exists( KYTE_CROSSWIND_ENV )) {
-    echo "Thank you for installing Crosswind to get your Kyte application up in to the sky.\n";
-    echo "First, we need some information to configure your Crosswind environment.\n\n";
+// check if .kyteGust exists
+if (!file_exists( KYTE_Gust_ENV )) {
+    echo "Thank you for installing Gust to get your Kyte application up in to the sky.\n";
+    echo "First, we need some information to configure your Gust environment.\n\n";
     echo "Where is your Kyte application located? (/var/www/html/): ";
-    $crosswind_env['kyte_dir'] = trim(fgets(KYTE_STDIN));
+    $Gust_env['kyte_dir'] = trim(fgets(KYTE_STDIN));
 
     echo "\n\nExcellent, next what is the DB engine? (InnoDB): ";
-    $crosswind_env['db_engine'] = trim(fgets(KYTE_STDIN));
+    $Gust_env['db_engine'] = trim(fgets(KYTE_STDIN));
 
     echo "\n\nPerfect, and one last, what is the charset? (utf8): ";
-    $crosswind_env['db_charset'] = trim(fgets(KYTE_STDIN));
+    $Gust_env['db_charset'] = trim(fgets(KYTE_STDIN));
 
-    echo "\n\nAweseome! Your answers have been saved in ".KYTE_CROSSWIND_ENV." so you won't have to keep typing them\n";
+    echo "\n\nAweseome! Your answers have been saved in ".KYTE_Gust_ENV." so you won't have to keep typing them\n";
 
     $config_content = <<<EOT
 #!/usr/bin/env php
 <?php
-    \$crosswind_env['kyte_dir'] = '{$crosswind_env['kyte_dir']}';
-    \$crosswind_env['db_engine'] = '{$crosswind_env['db_engine']}';
-    \$crosswind_env['db_charset'] = '{$crosswind_env['db_charset']}';
+    \$Gust_env['kyte_dir'] = '{$Gust_env['kyte_dir']}';
+    \$Gust_env['db_engine'] = '{$Gust_env['db_engine']}';
+    \$Gust_env['db_charset'] = '{$Gust_env['db_charset']}';
 EOT;
 
     // write config file
-    file_put_contents(KYTE_CROSSWIND_ENV, $config_content);
+    file_put_contents(KYTE_Gust_ENV, $config_content);
 } else {
-    require_once(KYTE_CROSSWIND_ENV);
+    require_once(KYTE_Gust_ENV);
 }
 
-if (!file_exists($crosswind_env['kyte_dir'].'config.php')) {
-    echo "Missing configuration file.  Please create a configuration file with path ".$crosswind_env['kyte_dir'].'config.php'.PHP_EOL;
+if (!file_exists($Gust_env['kyte_dir'].'config.php')) {
+    echo "Missing configuration file.  Please create a configuration file with path ".$Gust_env['kyte_dir'].'config.php'.PHP_EOL;
     exit(-1);
 }
-require_once($crosswind_env['kyte_dir'].'bootstrap.php');
+require_once($Gust_env['kyte_dir'].'bootstrap.php');
 
 // init db
 // init account
@@ -71,7 +71,7 @@ EOT;
         echo sprintf("database %s created\n", KYTE_DB_DATABASE);
 
         echo "Creating tables...\n";
-        $model_sql = \Crosswind\Database::create_tables($crosswind_env['db_charset'], $crosswind_env['db_engine']);
+        $model_sql = \Gust\Database::create_tables($Gust_env['db_charset'], $Gust_env['db_engine']);
         $sql_stmt = '';
 
         foreach($model_sql as $stmt) {

@@ -1,7 +1,6 @@
-#!/usr/bin/php
 <?php
 
-namespace Crosswind;
+namespace Gust;
 
 class Database {
 
