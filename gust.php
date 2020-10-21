@@ -3,7 +3,7 @@
 
 // constants
 define('KYTE_STDIN', fopen("php://stdin","rb"));
-define('KYTE_CROSSWIND_ENV', "~/.kytecrosswind")
+define('KYTE_CROSSWIND_ENV', "~/.kytecrosswind");
 
 if (PHP_SAPI !== 'cli' && PHP_SAPI !== 'phpdbg') {
     echo 'Warning: Crosswind should be invoked via the CLI version of PHP, not the '.PHP_SAPI.' SAPI'.PHP_EOL;
