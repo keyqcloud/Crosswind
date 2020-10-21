@@ -168,6 +168,7 @@ EOT;
             'name' => $argv[4],
             'email' => $argv[5],
             'password' => password_hash($argv[6], PASSWORD_DEFAULT),
+            'role'  => $role->getParam('id'),
             'kyte_account' => $account_number
         ])) {
             echo "FAILED\n\n";
