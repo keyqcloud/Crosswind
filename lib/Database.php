@@ -21,8 +21,6 @@ DROP TABLE IF EXISTS `$tbl_name`;
 CREATE TABLE `$tbl_name` (
 EOT;
 
-			$num_fields = count($cols);
-			$i = 1;
 			// table columns
 			foreach ($cols as $name => $attrs) {
 
@@ -94,7 +92,7 @@ EOT;
 					}
 				}
 
-				$field .= $i < $num_fields ? ",\n" : "\n";
+				$field .= ",\n";
 
 				$tbl_sql .= <<<EOT
 	$field
