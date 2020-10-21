@@ -80,7 +80,7 @@ EOT;
         file_put_contents('~/schema.sql', $sql_stmt);
 
         // create tables
-        shell_exec(sprintf("mysql -u%, -p%s -h%s %s < schema.sql", KYTE_DB_USERNAME, KYTE_DB_PASSWORD, KYTE_DB_HOST, KYTE_DB_DATABASE);
+        shell_exec(sprintf("mysql -u%, -p%s -h%s %s < schema.sql", KYTE_DB_USERNAME, KYTE_DB_PASSWORD, KYTE_DB_HOST, KYTE_DB_DATABASE));
         // TODO: check return response
 
         echo "DB initialization complete!\n\n";
