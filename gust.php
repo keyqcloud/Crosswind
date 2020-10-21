@@ -3,7 +3,7 @@
 
 // constants
 define('KYTE_STDIN', fopen("php://stdin","rb"));
-define('KYTE_Gust_ENV', $_SERVER['HOME']."/.kyteGust");
+define('KYTE_gust_env', $_SERVER['HOME']."/.kytegust");
 
 if (PHP_SAPI !== 'cli' && PHP_SAPI !== 'phpdbg') {
     echo 'Warning: Gust should be invoked via the CLI version of PHP, not the '.PHP_SAPI.' SAPI'.PHP_EOL;
@@ -11,39 +11,39 @@ if (PHP_SAPI !== 'cli' && PHP_SAPI !== 'phpdbg') {
 
 setlocale(LC_ALL, 'C');
 
-// check if .kyteGust exists
-if (!file_exists( KYTE_Gust_ENV )) {
+// check if .kytegust exists
+if (!file_exists( KYTE_gust_env )) {
     echo "Thank you for installing Gust to get your Kyte application up in to the sky.\n";
     echo "First, we need some information to configure your Gust environment.\n\n";
     echo "Where is your Kyte application located? (/var/www/html/): ";
-    $Gust_env['kyte_dir'] = trim(fgets(KYTE_STDIN));
+    $gust_env['kyte_dir'] = trim(fgets(KYTE_STDIN));
 
     echo "\n\nExcellent, next what is the DB engine? (InnoDB): ";
-    $Gust_env['db_engine'] = trim(fgets(KYTE_STDIN));
+    $gust_env['db_engine'] = trim(fgets(KYTE_STDIN));
 
     echo "\n\nPerfect, and one last, what is the charset? (utf8): ";
-    $Gust_env['db_charset'] = trim(fgets(KYTE_STDIN));
+    $gust_env['db_charset'] = trim(fgets(KYTE_STDIN));
 
-    echo "\n\nAweseome! Your answers have been saved in ".KYTE_Gust_ENV." so you won't have to keep typing them\n";
+    echo "\n\nAweseome! Your answers have been saved in ".KYTE_gust_env." so you won't have to keep typing them\n";
 
     $config_content = <<<EOT
 <?php
-    \$Gust_env['kyte_dir'] = '{$Gust_env['kyte_dir']}';
-    \$Gust_env['db_engine'] = '{$Gust_env['db_engine']}';
-    \$Gust_env['db_charset'] = '{$Gust_env['db_charset']}';
+    \$gust_env['kyte_dir'] = '{$gust_env['kyte_dir']}';
+    \$gust_env['db_engine'] = '{$gust_env['db_engine']}';
+    \$gust_env['db_charset'] = '{$gust_env['db_charset']}';
 EOT;
 
     // write config file
-    file_put_contents(KYTE_Gust_ENV, $config_content);
+    file_put_contents(KYTE_gust_env, $config_content);
 } else {
-    require_once(KYTE_Gust_ENV);
+    require_once(KYTE_gust_env);
 }
 
-if (!file_exists($Gust_env['kyte_dir'].'config.php')) {
-    echo "Missing configuration file.  Please create a configuration file with path ".$Gust_env['kyte_dir'].'config.php'.PHP_EOL;
+if (!file_exists($gust_env['kyte_dir'].'config.php')) {
+    echo "Missing configuration file.  Please create a configuration file with path ".$gust_env['kyte_dir'].'config.php'.PHP_EOL;
     exit(-1);
 }
-require_once($Gust_env['kyte_dir'].'bootstrap.php');
+require_once($gust_env['kyte_dir'].'bootstrap.php');
 
 // init db
 // init account
@@ -70,7 +70,7 @@ EOT;
         echo sprintf("database %s created\n", KYTE_DB_DATABASE);
 
         echo "Creating tables...\n";
-        $model_sql = \Gust\Database::create_tables($Gust_env['db_charset'], $Gust_env['db_engine']);
+        $model_sql = \Gust\Database::create_tables($gust_env['db_charset'], $gust_env['db_engine']);
         $sql_stmt = '';
 
         foreach($model_sql as $stmt) {
