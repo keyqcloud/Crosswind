@@ -3,7 +3,7 @@
 
 // constants
 define('KYTE_STDIN', fopen("php://stdin","rb"));
-define('KYTE_CROSSWIND_ENV', "~/.kytecrosswind");
+define('KYTE_CROSSWIND_ENV', $_SERVER['HOME']."/.kytecrosswind");
 
 if (PHP_SAPI !== 'cli' && PHP_SAPI !== 'phpdbg') {
     echo 'Warning: Crosswind should be invoked via the CLI version of PHP, not the '.PHP_SAPI.' SAPI'.PHP_EOL;
@@ -61,8 +61,8 @@ if (isset($argv[1], $argv[2]) ) {
 mysql -u%s -p%s -h%s %s
 EOT;
 
-        file_put_contents('~/dbconnect.sh', sprintf($content, KYTE_DB_USERNAME, KYTE_DB_PASSWORD, KYTE_DB_HOST, KYTE_DB_DATABASE));
-        echo "Database connection bash script created (~/dbconnect.sh)\n";
+        file_put_contents($_SERVER['HOME'].'/dbconnect.sh', sprintf($content, KYTE_DB_USERNAME, KYTE_DB_PASSWORD, KYTE_DB_HOST, KYTE_DB_DATABASE));
+        echo "Database connection bash script created ({$_SERVER['HOME']}/dbconnect.sh)\n";
 
         echo "Initializing database...";
         // check if database exists and if not create it
@@ -77,7 +77,7 @@ EOT;
         foreach($model_sql as $stmt) {
             $sql_stmt .= $stmt."\n\n";
         }
-        file_put_contents('~/schema.sql', $sql_stmt);
+        file_put_contents($_SERVER['HOME'].'/schema.sql', $sql_stmt);
 
         // create tables
         shell_exec(sprintf("mysql -u%, -p%s -h%s %s < schema.sql", KYTE_DB_USERNAME, KYTE_DB_PASSWORD, KYTE_DB_HOST, KYTE_DB_DATABASE));
