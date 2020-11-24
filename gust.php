@@ -121,7 +121,7 @@ EOT;
             'public_key' => $public_key,
             'secret_key' => $secret_key,
             'epoch' => $epoch,
-            'kyte_account' => $account_number,
+            'kyte_account' => $account->getParam('id'),
         ])) {
             echo "FAILED\n\n";
             exit(-1);
@@ -136,7 +136,7 @@ EOT;
         $role = new \Kyte\ModelObject(Role);
         if (!$role->create([
             'name' => 'Administrator',
-            'kyte_account' => $account_number
+            'kyte_account' => $account->getParam('id')
         ])) {
             echo "FAILED\n\n";
             exit(-1);
@@ -152,7 +152,7 @@ EOT;
                     'role'  => $role->getParam('id'),
                     'model' => $$model['name'],
                     'action' => $actionType,
-                    'kyte_account' => $account_number
+                    'kyte_account' => $account->getParam('id')
                 ])) {
                     echo "FAILED\n\n";
                     exit(-1);
@@ -169,7 +169,7 @@ EOT;
             'email' => $argv[5],
             'password' => password_hash($argv[6], PASSWORD_DEFAULT),
             'role'  => $role->getParam('id'),
-            'kyte_account' => $account_number
+            'kyte_account' => $account->getParam('id')
         ])) {
             echo "FAILED\n\n";
             exit(-1);
