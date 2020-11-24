@@ -163,8 +163,8 @@ EOT;
 
         // create user
         echo "Creating new admin user...";
-        $role = new \Kyte\ModelObject(User);
-        if (!$role->create([
+        $user = new \Kyte\ModelObject(User);
+        if (!$user->create([
             'name' => $argv[4],
             'email' => $argv[5],
             'password' => password_hash($argv[6], PASSWORD_DEFAULT),
