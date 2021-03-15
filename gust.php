@@ -177,4 +177,25 @@ EOT;
         echo "OK\n\n";
 
     }
+
+    // add new model to db
+    if ($argv[1] == 'model' && $argv[2] == 'add' && isset($argv[3])) {
+        // load DB lib
+        require_once __DIR__.'/lib/Database.php';
+
+        echo "Creating database table for new model...";
+        $model_sql = \Gust\Database::create_table($argv[3], $gust_env['db_charset'], $gust_env['db_engine']);
+        $sql_stmt = '';
+
+        foreach($model_sql as $stmt) {
+            $sql_stmt .= $stmt."\n\n";
+        }
+        file_put_contents($_SERVER['HOME'].'/'.$gust_env['db_charset'].'.sql', $sql_stmt);
+
+        // create tables
+        shell_exec(sprintf("mysql -u%s -p%s -h%s %s < ".$gust_env['db_charset'].'.sql', KYTE_DB_USERNAME, KYTE_DB_PASSWORD, KYTE_DB_HOST, KYTE_DB_DATABASE));
+        // TODO: check return response
+
+        echo "Model added!\n\n";
+    }
 }
