@@ -107,7 +107,6 @@ EOT;
 $field
 EOT;
 
-			$i++;
 		}
 
 		// primary key
