@@ -58,7 +58,6 @@ require_once(__DIR__.'/lib/Database.php');
 
 // load API and bootstrap to read in models
 $api = new \Kyte\Core\Api();
-$api->bootstrap();
 
 // init db
 // init account
