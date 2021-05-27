@@ -103,7 +103,7 @@ EOT;
 
         // create account
         echo "Creating account...";
-        $account = new \Kyte\ModelObject(Account);
+        $account = new \Kyte\Core\ModelObject(Account);
         $length=20; //maximum: 32
         do {
             $account_number = substr(md5(uniqid(microtime())),0,$length);
@@ -126,7 +126,7 @@ EOT;
         $secret_key = hash_hmac('sha1', $identifier, $epoch);
         $public_key = hash_hmac('sha1', $identifier, $secret_key);
 
-        $apiKey = new \Kyte\ModelObject(APIKey);
+        $apiKey = new \Kyte\Core\ModelObject(APIKey);
         if (!$apiKey->create([
             'identifier' => $identifier,
             'public_key' => $public_key,
@@ -144,7 +144,7 @@ EOT;
 
         // populate with default Admin role for all models
         echo "Creating new admin role...";
-        $role = new \Kyte\ModelObject(Role);
+        $role = new \Kyte\Core\ModelObject(Role);
         if (!$role->create([
             'name' => 'Administrator',
             'kyte_account' => $account->getParam('id')
@@ -157,7 +157,7 @@ EOT;
         echo "Creating default admin permissions for role.\n";
         foreach (KYTE_MODELS as $model) {
             foreach (['new', 'update', 'get', 'delete'] as $actionType) {
-                $permission = new \Kyte\ModelObject(Permission);
+                $permission = new \Kyte\Core\ModelObject(Permission);
                 echo "Creating $actionType permission for ".$$model['name']."...";
                 if (!$permission->create([
                     'role'  => $role->getParam('id'),
@@ -174,7 +174,7 @@ EOT;
 
         // create user
         echo "Creating new admin user...";
-        $user = new \Kyte\ModelObject(User);
+        $user = new \Kyte\Core\ModelObject(User);
         if (!$user->create([
             'name' => $argv[4],
             'email' => $argv[5],
