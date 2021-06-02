@@ -132,7 +132,7 @@ EOT;
             'public_key' => $public_key,
             'secret_key' => $secret_key,
             'epoch' => $epoch,
-            'kyte_account' => $account->getParam('id'),
+            'kyte_account' => $account->id),
         ])) {
             echo "FAILED\n\n";
             exit(-1);
@@ -147,7 +147,7 @@ EOT;
         $role = new \Kyte\Core\ModelObject(Role);
         if (!$role->create([
             'name' => 'Administrator',
-            'kyte_account' => $account->getParam('id')
+            'kyte_account' => $account->id)
         ])) {
             echo "FAILED\n\n";
             exit(-1);
@@ -160,10 +160,10 @@ EOT;
                 $permission = new \Kyte\Core\ModelObject(Permission);
                 echo "Creating $actionType permission for ".constant($model)['name']."...";
                 if (!$permission->create([
-                    'role'  => $role->getParam('id'),
+                    'role'  => $role->id),
                     'model' => constant($model)['name'],
                     'action' => $actionType,
-                    'kyte_account' => $account->getParam('id')
+                    'kyte_account' => $account->id)
                 ])) {
                     echo "FAILED\n\n";
                     exit(-1);
@@ -179,8 +179,8 @@ EOT;
             'name' => $argv[4],
             'email' => $argv[5],
             'password' => password_hash($argv[6], PASSWORD_DEFAULT),
-            'role'  => $role->getParam('id'),
-            'kyte_account' => $account->getParam('id')
+            'role'  => $role->id),
+            'kyte_account' => $account->id)
         ])) {
             echo "FAILED\n\n";
             exit(-1);
