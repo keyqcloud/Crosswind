@@ -13,28 +13,34 @@ setlocale(LC_ALL, 'C');
 
 // check if .kytegust exists
 if (!file_exists( KYTE_gust_env )) {
-    echo "Thank you for installing Gust to get your Kyte application up in to the sky.\n";
-    echo "First, we need some information to configure your Gust environment.\n\n";
-    echo "Where is your Kyte application located? (/var/www/html/): ";
-    $gust_env['kyte_dir'] = trim(fgets(KYTE_STDIN));
+    if (isset($argv[1], $argv[2], $argv[3]) ) {
+        // echo "Thank you for installing Gust to get your Kyte application up in to the sky.\n";
+        // echo "First, we need some information to configure your Gust environment.\n\n";
+        // echo "Where is your Kyte application located? (/var/www/html/): ";
+        $gust_env['kyte_dir'] = trim($argv[1]);
 
-    echo "\n\nExcellent, next what is the DB engine? (InnoDB): ";
-    $gust_env['db_engine'] = trim(fgets(KYTE_STDIN));
+        // echo "\n\nExcellent, next what is the DB engine? (InnoDB): ";
+        $gust_env['db_engine'] = trim($argv[2]);
 
-    echo "\n\nPerfect, and one last, what is the charset? (utf8): ";
-    $gust_env['db_charset'] = trim(fgets(KYTE_STDIN));
+        // echo "\n\nPerfect, and one last, what is the charset? (utf8): ";
+        $gust_env['db_charset'] = trim($argv[3]);
 
-    echo "\n\nAweseome! Your answers have been saved in ".KYTE_gust_env." so you won't have to keep typing them\n";
+        echo "\n\nAweseome! Your answers have been saved in ".KYTE_gust_env." so you won't have to keep typing them\n";
 
-    $config_content = <<<EOT
+        $config_content = <<<EOT
 <?php
     \$gust_env['kyte_dir'] = '{$gust_env['kyte_dir']}';
     \$gust_env['db_engine'] = '{$gust_env['db_engine']}';
     \$gust_env['db_charset'] = '{$gust_env['db_charset']}';
 EOT;
 
-    // write config file
-    file_put_contents(KYTE_gust_env, $config_content);
+        // write config file
+        file_put_contents(KYTE_gust_env, $config_content);
+    } else {
+        echo "Missing parameters... please specify directory, db engine and charset.\n";
+        echo "Ex:\n";
+        echo "gust /var/www/html/ InnoDB utf8mb4";
+    }
 } else {
     require_once(KYTE_gust_env);
 }
