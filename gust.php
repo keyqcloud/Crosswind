@@ -1,15 +1,17 @@
 #!/usr/bin/env php
 <?php
 
-// constants
-define('KYTE_STDIN', fopen("php://stdin","rb"));
-define('KYTE_gust_env', $_SERVER['HOME']."/.kytegust");
-
+// prevent access from web
 if (PHP_SAPI !== 'cli' && PHP_SAPI !== 'phpdbg') {
     echo 'Warning: Gust should be invoked via the CLI version of PHP, not the '.PHP_SAPI.' SAPI'.PHP_EOL;
 }
 
+// set local
 setlocale(LC_ALL, 'C');
+
+// constants
+define('KYTE_STDIN', fopen("php://stdin","rb"));
+define('KYTE_gust_env', $_SERVER['HOME']."/.kytegust");
 
 // check if .kytegust exists
 if (!file_exists( KYTE_gust_env )) {
@@ -132,7 +134,7 @@ EOT;
             'public_key' => $public_key,
             'secret_key' => $secret_key,
             'epoch' => $epoch,
-            'kyte_account' => $account->id),
+            'kyte_account' => $account->id,
         ])) {
             echo "FAILED\n\n";
             exit(-1);
@@ -147,7 +149,7 @@ EOT;
         $role = new \Kyte\Core\ModelObject(Role);
         if (!$role->create([
             'name' => 'Administrator',
-            'kyte_account' => $account->id)
+            'kyte_account' => $account->id
         ])) {
             echo "FAILED\n\n";
             exit(-1);
@@ -160,10 +162,10 @@ EOT;
                 $permission = new \Kyte\Core\ModelObject(Permission);
                 echo "Creating $actionType permission for ".constant($model)['name']."...";
                 if (!$permission->create([
-                    'role'  => $role->id),
+                    'role'  => $role->id,
                     'model' => constant($model)['name'],
                     'action' => $actionType,
-                    'kyte_account' => $account->id)
+                    'kyte_account' => $account->id,
                 ])) {
                     echo "FAILED\n\n";
                     exit(-1);
@@ -179,8 +181,8 @@ EOT;
             'name' => $argv[4],
             'email' => $argv[5],
             'password' => password_hash($argv[6], PASSWORD_DEFAULT),
-            'role'  => $role->id),
-            'kyte_account' => $account->id)
+            'role'  => $role->id,
+            'kyte_account' => $account->id,
         ])) {
             echo "FAILED\n\n";
             exit(-1);
