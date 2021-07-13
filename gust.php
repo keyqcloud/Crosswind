@@ -1,15 +1,17 @@
 #!/usr/bin/env php
 <?php
 
-// constants
-define('KYTE_STDIN', fopen("php://stdin","rb"));
-define('KYTE_gust_env', $_SERVER['HOME']."/.kytegust");
-
+// prevent access from web
 if (PHP_SAPI !== 'cli' && PHP_SAPI !== 'phpdbg') {
     echo 'Warning: Gust should be invoked via the CLI version of PHP, not the '.PHP_SAPI.' SAPI'.PHP_EOL;
 }
 
+// set local
 setlocale(LC_ALL, 'C');
+
+// constants
+define('KYTE_STDIN', fopen("php://stdin","rb"));
+define('KYTE_gust_env', $_SERVER['HOME']."/.kytegust");
 
 // check if .kytegust exists
 if (!file_exists( KYTE_gust_env )) {
@@ -45,11 +47,25 @@ EOT;
     require_once(KYTE_gust_env);
 }
 
+
+// check if required files exist
 if (!file_exists($gust_env['kyte_dir'].'config.php')) {
     echo "Missing configuration file.  Please create a configuration file with path ".$gust_env['kyte_dir'].'config.php'.PHP_EOL;
     exit(-1);
 }
-require_once($gust_env['kyte_dir'].'bootstrap.php');
+if (!file_exists($gust_env['kyte_dir'].'vendor/autoload.php')) {
+    echo "Missing composer autoload file.".PHP_EOL;
+    exit(-1);
+}
+
+
+// read in required files
+require_once($gust_env['kyte_dir'].'/vendor/autoload.php');
+require_once($gust_env['kyte_dir'].'/config.php');
+require_once(__DIR__.'/lib/Database.php');
+
+// load API and bootstrap to read in models
+$api = new \Kyte\Core\Api();
 
 // init db
 // init account
@@ -57,9 +73,6 @@ if (isset($argv[1], $argv[2]) ) {
 
     // init db
     if ($argv[1] == 'init' && $argv[2] == 'db') {
-        // load DB lib
-        require_once __DIR__.'/lib/Database.php';
-
         // create db connection sh for convenience
         $content = <<<EOT
 #!/usr/bin/bash
@@ -98,7 +111,7 @@ EOT;
 
         // create account
         echo "Creating account...";
-        $account = new \Kyte\ModelObject(Account);
+        $account = new \Kyte\Core\ModelObject(Account);
         $length=20; //maximum: 32
         do {
             $account_number = substr(md5(uniqid(microtime())),0,$length);
@@ -121,13 +134,13 @@ EOT;
         $secret_key = hash_hmac('sha1', $identifier, $epoch);
         $public_key = hash_hmac('sha1', $identifier, $secret_key);
 
-        $apiKey = new \Kyte\ModelObject(APIKey);
+        $apiKey = new \Kyte\Core\ModelObject(APIKey);
         if (!$apiKey->create([
             'identifier' => $identifier,
             'public_key' => $public_key,
             'secret_key' => $secret_key,
             'epoch' => $epoch,
-            'kyte_account' => $account->getParam('id'),
+            'kyte_account' => $account->id,
         ])) {
             echo "FAILED\n\n";
             exit(-1);
@@ -139,10 +152,10 @@ EOT;
 
         // populate with default Admin role for all models
         echo "Creating new admin role...";
-        $role = new \Kyte\ModelObject(Role);
+        $role = new \Kyte\Core\ModelObject(Role);
         if (!$role->create([
             'name' => 'Administrator',
-            'kyte_account' => $account->getParam('id')
+            'kyte_account' => $account->id
         ])) {
             echo "FAILED\n\n";
             exit(-1);
@@ -152,13 +165,13 @@ EOT;
         echo "Creating default admin permissions for role.\n";
         foreach (KYTE_MODELS as $model) {
             foreach (['new', 'update', 'get', 'delete'] as $actionType) {
-                $permission = new \Kyte\ModelObject(Permission);
-                echo "Creating $actionType permission for ".$$model['name']."...";
+                $permission = new \Kyte\Core\ModelObject(Permission);
+                echo "Creating $actionType permission for ".constant($model)['name']."...";
                 if (!$permission->create([
-                    'role'  => $role->getParam('id'),
-                    'model' => $$model['name'],
+                    'role'  => $role->id,
+                    'model' => constant($model)['name'],
                     'action' => $actionType,
-                    'kyte_account' => $account->getParam('id')
+                    'kyte_account' => $account->id,
                 ])) {
                     echo "FAILED\n\n";
                     exit(-1);
@@ -169,13 +182,13 @@ EOT;
 
         // create user
         echo "Creating new admin user...";
-        $user = new \Kyte\ModelObject(User);
+        $user = new \Kyte\Core\ModelObject(User);
         if (!$user->create([
             'name' => $argv[4],
             'email' => $argv[5],
             'password' => password_hash($argv[6], PASSWORD_DEFAULT),
-            'role'  => $role->getParam('id'),
-            'kyte_account' => $account->getParam('id')
+            'role'  => $role->id,
+            'kyte_account' => $account->id,
         ])) {
             echo "FAILED\n\n";
             exit(-1);
