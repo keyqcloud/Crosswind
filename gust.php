@@ -43,6 +43,7 @@ EOT;
         echo "Ex:\n";
         echo "gust /var/www/html/ InnoDB utf8mb4";
     }
+    exit;
 } else {
     require_once(KYTE_gust_env);
 }
