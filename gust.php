@@ -167,11 +167,10 @@ EOT;
         foreach (KYTE_MODELS as $model) {
             foreach (['new', 'update', 'get', 'delete'] as $actionType) {
                 $permission = new \Kyte\Core\ModelObject(Permission);
-                $model_name = constant($model)['name'];
-                echo "Creating $actionType permission for ".$model_name."...";
+                echo "Creating $actionType permission for ".$model."...";
                 if (!$permission->create([
                     'role'  => $role->id,
-                    'model' => $model_name,
+                    'model' => $model,
                     'action' => $actionType,
                     'kyte_account' => $account->id,
                 ])) {
