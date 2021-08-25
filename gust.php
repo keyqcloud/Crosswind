@@ -77,7 +77,7 @@ if (isset($argv[1], $argv[2]) ) {
         // create db connection sh for convenience
         $content = <<<EOT
 #!/usr/bin/bash
-mysql -u%s -p%s -h%s %s
+mysql -u%s -p"%s" -h%s %s
 EOT;
 
         file_put_contents($_SERVER['HOME'].'/dbconnect.sh', sprintf($content, KYTE_DB_USERNAME, KYTE_DB_PASSWORD, KYTE_DB_HOST, KYTE_DB_DATABASE));
@@ -85,7 +85,7 @@ EOT;
 
         echo "Initializing database...";
         // check if database exists and if not create it
-        shell_exec(sprintf("mysql -u%s -p%s -h%s -e 'CREATE DATABASE IF NOT EXISTS %s;'", KYTE_DB_USERNAME, KYTE_DB_PASSWORD, KYTE_DB_HOST, KYTE_DB_DATABASE));
+        shell_exec(sprintf("mysql -u%s -p\"%s\" -h%s -e 'CREATE DATABASE IF NOT EXISTS %s;'", KYTE_DB_USERNAME, KYTE_DB_PASSWORD, KYTE_DB_HOST, KYTE_DB_DATABASE));
         // TODO: Check return response
         echo sprintf("database %s created\n", KYTE_DB_DATABASE);
 
@@ -99,7 +99,7 @@ EOT;
         file_put_contents($_SERVER['HOME'].'/schema.sql', $sql_stmt);
 
         // create tables
-        shell_exec(sprintf("mysql -u%s -p%s -h%s %s < schema.sql", KYTE_DB_USERNAME, KYTE_DB_PASSWORD, KYTE_DB_HOST, KYTE_DB_DATABASE));
+        shell_exec(sprintf("mysql -u%s -p\"%s\" -h%s %s < schema.sql", KYTE_DB_USERNAME, KYTE_DB_PASSWORD, KYTE_DB_HOST, KYTE_DB_DATABASE));
         // TODO: check return response
 
         echo "DB initialization complete!\n\n";
