@@ -8,17 +8,15 @@ class Database {
 		$sqls = [];
 	
 		// iterate through each model and create sql table
-		foreach (KYTE_MODELS as $modelName) {
-			$model = constant($modelName);
+		foreach (KYTE_MODELS as $model) {
 			$tbl_name = $model['name'];
-			$sqls[$tbl_name] = self::create_table($modelName, $charset, $engine);
+			$sqls[$tbl_name] = self::create_table($model, $charset, $engine);
 		}
 
 		return $sqls;
 	}
 
-	public static function create_table($modelName, $charset, $engine) {
-		$model = constant($modelName);
+	public static function create_table($model, $charset, $engine) {
 		$tbl_name = $model['name'];
 		$cols = $model['struct'];
 		$pk_name = '';	// store col struct for primary key
