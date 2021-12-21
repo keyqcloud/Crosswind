@@ -203,14 +203,16 @@ EOT;
         // load DB lib
         require_once __DIR__.'/lib/Database.php';
 
+        $model_name = $argv[3];
+
         echo "Creating database table for new model...";
-        $model_sql = \Gust\Database::create_table($argv[3], $gust_env['db_charset'], $gust_env['db_engine']);
+        $model_sql = \Gust\Database::create_table($$model_name, $gust_env['db_charset'], $gust_env['db_engine']);
         $sql_stmt = '';
 
-        file_put_contents($_SERVER['HOME'].'/'.$argv[3].'.sql', $model_sql);
+        file_put_contents($_SERVER['HOME'].'/'.$model_name.'.sql', $model_sql);
 
         // create tables
-        shell_exec(sprintf("mysql -u%s -p%s -h%s %s < ".$argv[3].'.sql', KYTE_DB_USERNAME, KYTE_DB_PASSWORD, KYTE_DB_HOST, KYTE_DB_DATABASE));
+        shell_exec(sprintf("mysql -u%s -p%s -h%s %s < ".$model_name.'.sql', KYTE_DB_USERNAME, KYTE_DB_PASSWORD, KYTE_DB_HOST, KYTE_DB_DATABASE));
         // TODO: check return response
 
         echo "Model added!\n\n";
