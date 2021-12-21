@@ -206,7 +206,7 @@ EOT;
         $model_name = $argv[3];
 
         echo "Creating database table for new model...";
-        $model_sql = \Gust\Database::create_table($$model_name, $gust_env['db_charset'], $gust_env['db_engine']);
+        $model_sql = \Gust\Database::create_table(constant($model_name), $gust_env['db_charset'], $gust_env['db_engine']);
         $sql_stmt = '';
 
         file_put_contents($_SERVER['HOME'].'/'.$model_name.'.sql', $model_sql);
