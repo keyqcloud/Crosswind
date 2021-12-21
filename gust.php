@@ -83,6 +83,16 @@ EOT;
         file_put_contents($_SERVER['HOME'].'/dbconnect.sh', sprintf($content, KYTE_DB_USERNAME, KYTE_DB_PASSWORD, KYTE_DB_HOST, KYTE_DB_DATABASE));
         echo "Database connection bash script created ({$_SERVER['HOME']}/dbconnect.sh)\n";
 
+        $content = <<<EOT
+#!/usr/bin/bash
+
+current_time=$(date "+\%Y.\%m.\%d-\%H.\%M.\%S")
+mysqldump -u%s -p"%s" -h%s %s > backup_\$current_time.sql
+EOT;
+
+        file_put_contents($_SERVER['HOME'].'/dbconnect.sh', sprintf($content, KYTE_DB_USERNAME, KYTE_DB_PASSWORD, KYTE_DB_HOST, KYTE_DB_DATABASE));
+        echo "Database backup bash script created ({$_SERVER['HOME']}/dbconnect.sh)\n";
+
         echo "Initializing database...";
         // check if database exists and if not create it
         shell_exec(sprintf("mysql -u%s -p\"%s\" -h%s -e 'CREATE DATABASE IF NOT EXISTS %s;'", KYTE_DB_USERNAME, KYTE_DB_PASSWORD, KYTE_DB_HOST, KYTE_DB_DATABASE));
