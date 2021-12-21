@@ -212,7 +212,7 @@ EOT;
         file_put_contents($_SERVER['HOME'].'/'.$model_name.'.sql', $model_sql);
 
         // create tables
-        shell_exec(sprintf("mysql -u%s -p%s -h%s %s < ".$model_name.'.sql', KYTE_DB_USERNAME, KYTE_DB_PASSWORD, KYTE_DB_HOST, KYTE_DB_DATABASE));
+        shell_exec(sprintf("mysql -u%s -p\"%s\" -h%s %s < ".$model_name.'.sql', KYTE_DB_USERNAME, KYTE_DB_PASSWORD, KYTE_DB_HOST, KYTE_DB_DATABASE));
         // TODO: check return response
 
         echo "Model added!\n\n";
