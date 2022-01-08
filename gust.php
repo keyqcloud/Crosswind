@@ -225,6 +225,17 @@ EOT;
         shell_exec(sprintf("mysql -u%s -p\"%s\" -h%s %s < ".$model_name.'.sql', KYTE_DB_USERNAME, KYTE_DB_PASSWORD, KYTE_DB_HOST, KYTE_DB_DATABASE));
         // TODO: check return response
 
+        //  set permissions for primary admin role
+        $perm = new \Kyte\Core\ModelObject(Permission);
+        foreach(['new','udpate','get','delete'] as $action) {
+            $perm->create([
+                'role' => 1,
+                'model' => $model_name,
+                'action' => $action,
+                'kyte_account' => 1,
+            ]);
+        }
+
         echo "Model added!\n\n";
     }
 }
