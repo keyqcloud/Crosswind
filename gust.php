@@ -86,7 +86,7 @@ EOT;
         $content = <<<EOT
 #!/usr/bin/bash
 
-current_time=$(date "+\\%Y.\\%m.\\%d-\\%H.\\%M.\\%S")
+current_time=$(date "+\\%%Y.\\%%m.\\%%d-\\%%H.\\%%M.\\%%S")
 mysqldump -u%s -p"%s" -h%s %s > backup_\$current_time.sql
 EOT;
 
