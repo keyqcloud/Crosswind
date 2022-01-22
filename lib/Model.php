@@ -25,6 +25,8 @@ class Model {
 
 ?>
 EOT;
+
+		return $php;
 	}
 }
 

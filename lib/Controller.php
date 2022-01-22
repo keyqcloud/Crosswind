@@ -50,6 +50,8 @@ class $name extends \Kyte\Mvc\Controller\ModelController
 
 ?>
 EOT;
+
+		return $php;
 	}
 }
 
