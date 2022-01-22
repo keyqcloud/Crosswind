@@ -208,6 +208,52 @@ EOT;
 
     }
 
+    // create a new controller file
+    if ($argv[1] == 'controller' && $argv[2] == 'create' && isset($argv[3])) {
+        require_once __DIR__.'/lib/Controller.php';
+
+        $model_name = $argv[3];
+
+        // create new model file
+        $model = \Gust\Controller::create($model_name);
+
+        // check if dir exists
+        if(!is_dir($gust_env['kyte_dir'].'app')) {
+            // create dir
+            shell_exec(sprintf("mkdir %s", $gust_env['kyte_dir'].'app'));
+        }
+        if(!is_dir($gust_env['kyte_dir'].'app/controllers')) {
+            // create dir
+            shell_exec(sprintf("mkdir %s", $gust_env['kyte_dir'].'app/controllers'));
+        }
+        
+        // write to file
+        file_put_contents($gust_env['kyte_dir'].'app/models/'.$model_name.'.php', $model);
+    }
+
+    // create a new model file
+    if ($argv[1] == 'model' && $argv[2] == 'create' && isset($argv[3])) {
+        require_once __DIR__.'/lib/Model.php';
+
+        $model_name = $argv[3];
+
+        // create new model file
+        $model = \Gust\Model::create($model_name);
+
+        // check if dir exists
+        if(!is_dir($gust_env['kyte_dir'].'app')) {
+            // create dir
+            shell_exec(sprintf("mkdir %s", $gust_env['kyte_dir'].'app'));
+        }
+        if(!is_dir($gust_env['kyte_dir'].'app/models')) {
+            // create dir
+            shell_exec(sprintf("mkdir %s", $gust_env['kyte_dir'].'app/models'));
+        }
+        
+        // write to file
+        file_put_contents($gust_env['kyte_dir'].'app/models/'.$model_name.'.php', $model);
+    }
+
     // add new model to db
     if ($argv[1] == 'model' && $argv[2] == 'add' && isset($argv[3])) {
         // load DB lib
