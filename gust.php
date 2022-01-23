@@ -236,7 +236,7 @@ EOT;
         }
         
         // write to file
-        file_put_contents(($developer_mode || !isset($gust_env) ? '' : $gust_env['kyte_dir']).'app/models/'.$model_name.'.php', $model);
+        file_put_contents(($developer_mode || !isset($gust_env) ? '' : $gust_env['kyte_dir']).'app/controllers/'.$model_name.'Controller.php', $model);
     }
 
     // create a new model file
