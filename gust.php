@@ -1,6 +1,8 @@
 #!/usr/bin/env php
 <?php
 
+$developer_mode = false;
+
 // prevent access from web
 if (PHP_SAPI !== 'cli' && PHP_SAPI !== 'phpdbg') {
     echo 'Warning: Gust should be invoked via the CLI version of PHP, not the '.PHP_SAPI.' SAPI'.PHP_EOL;
@@ -10,22 +12,27 @@ if (PHP_SAPI !== 'cli' && PHP_SAPI !== 'phpdbg') {
 setlocale(LC_ALL, 'C');
 
 // constants
-define('KYTE_STDIN', fopen("php://stdin","rb"));
+define('KYTE_STDIN', fopen("php://stdin","r"));
 define('KYTE_gust_env', $_SERVER['HOME']."/.kytegust");
 
 // check if .kytegust exists
 if (!file_exists( KYTE_gust_env )) {
-    if (isset($argv[1], $argv[2], $argv[3]) ) {
-        // echo "Thank you for installing Gust to get your Kyte application up in to the sky.\n";
-        // echo "First, we need some information to configure your Gust environment.\n\n";
-        // echo "Where is your Kyte application located? (/var/www/html/): ";
-        $gust_env['kyte_dir'] = trim($argv[1]);
+    if (!isset($argv[1]) ) {
+        echo "Thank you for installing Gust to get your Kyte application up in to the sky.\n";
+        echo "First, we need some information to configure your Gust environment.\n\n";
 
-        // echo "\n\nExcellent, next what is the DB engine? (InnoDB): ";
-        $gust_env['db_engine'] = trim($argv[2]);
+        echo "Where is your Kyte application located? (/var/www/html/): ";
+        $line = fgets(KYTE_STDIN);
+        $gust_env['kyte_dir'] = trim($line);
 
-        // echo "\n\nPerfect, and one last, what is the charset? (utf8): ";
-        $gust_env['db_charset'] = trim($argv[3]);
+        echo "\n\nExcellent, next what is the DB engine? (InnoDB): ";
+        $line = fgets(KYTE_STDIN);
+        $gust_env['db_engine'] = trim($line);
+
+        echo "\n\nPerfect, and one last, what is the charset? (utf8): ";
+        $line = fgets(KYTE_STDIN);
+        $gust_env['db_charset'] = trim($line);
+        fclose(KYTE_STDIN);
 
         echo "\n\nAweseome! Your answers have been saved in ".KYTE_gust_env." so you won't have to keep typing them\n";
 
@@ -38,42 +45,43 @@ EOT;
 
         // write config file
         file_put_contents(KYTE_gust_env, $config_content);
+        require_once(KYTE_gust_env);
+        $developer_mode = true;
     } else {
-        echo "Missing parameters... please specify directory, db engine and charset.\n";
-        echo "Ex:\n";
-        echo "gust /var/www/html/ InnoDB utf8mb4";
+        echo "Server configuration not found - running in developer mode.\n";
     }
-    exit;
 } else {
     require_once(KYTE_gust_env);
+    $developer_mode = true;
 }
 
-
+if ($developer_mode) {
 // check if required files exist
-if (!file_exists($gust_env['kyte_dir'].'config.php')) {
-    echo "Missing configuration file.  Please create a configuration file with path ".$gust_env['kyte_dir'].'config.php'.PHP_EOL;
-    exit(-1);
+    if (!file_exists($gust_env['kyte_dir'].'config.php')) {
+        echo "Missing configuration file.  Please create a configuration file with path ".$gust_env['kyte_dir'].'config.php'.PHP_EOL;
+        exit(-1);
+    }
+    if (!file_exists($gust_env['kyte_dir'].'vendor/autoload.php')) {
+        echo "Missing composer autoload file.".PHP_EOL;
+        exit(-1);
+    }
+
+    // read in required files
+    require_once($gust_env['kyte_dir'].'/vendor/autoload.php');
+    require_once($gust_env['kyte_dir'].'/config.php');
+
+    require_once(__DIR__.'/lib/Database.php');
+
+    // load API and bootstrap to read in models
+    $api = new \Kyte\Core\Api();
 }
-if (!file_exists($gust_env['kyte_dir'].'vendor/autoload.php')) {
-    echo "Missing composer autoload file.".PHP_EOL;
-    exit(-1);
-}
-
-
-// read in required files
-require_once($gust_env['kyte_dir'].'/vendor/autoload.php');
-require_once($gust_env['kyte_dir'].'/config.php');
-require_once(__DIR__.'/lib/Database.php');
-
-// load API and bootstrap to read in models
-$api = new \Kyte\Core\Api();
 
 // init db
 // init account
 if (isset($argv[1], $argv[2]) ) {
 
     // init db
-    if ($argv[1] == 'init' && $argv[2] == 'db') {
+    if ($argv[1] == 'init' && $argv[2] == 'db' && !$developer_mode) {
         // create db connection sh for convenience
         $content = <<<EOT
 #!/usr/bin/bash
@@ -117,7 +125,7 @@ EOT;
     }
 
     // init account [Account Name] [User's Name] [email] [password]
-    if ($argv[1] == 'init' && $argv[2] == 'account' && isset($argv[3], $argv[4], $argv[5], $argv[6])) {
+    if ($argv[1] == 'init' && $argv[2] == 'account' && isset($argv[3], $argv[4], $argv[5], $argv[6]) && !$developer_mode) {
         echo "Begining account initialization...\n\n";
 
         // create account
@@ -218,17 +226,17 @@ EOT;
         $model = \Gust\Controller::create($model_name);
 
         // check if dir exists
-        if(!is_dir($gust_env['kyte_dir'].'app')) {
+        if(!is_dir(($developer_mode || !isset($gust_env) ? '' : $gust_env['kyte_dir']).'app')) {
             // create dir
-            shell_exec(sprintf("mkdir %s", $gust_env['kyte_dir'].'app'));
+            shell_exec(sprintf("mkdir %s", ($developer_mode || !isset($gust_env) ? '' : $gust_env['kyte_dir']).'app'));
         }
-        if(!is_dir($gust_env['kyte_dir'].'app/controllers')) {
+        if(!is_dir(($developer_mode || !isset($gust_env) ? '' : $gust_env['kyte_dir']).'app/controllers')) {
             // create dir
-            shell_exec(sprintf("mkdir %s", $gust_env['kyte_dir'].'app/controllers'));
+            shell_exec(sprintf("mkdir %s", ($developer_mode || !isset($gust_env) ? '' : $gust_env['kyte_dir']).'app/controllers'));
         }
         
         // write to file
-        file_put_contents($gust_env['kyte_dir'].'app/models/'.$model_name.'.php', $model);
+        file_put_contents(($developer_mode || !isset($gust_env) ? '' : $gust_env['kyte_dir']).'app/models/'.$model_name.'.php', $model);
     }
 
     // create a new model file
@@ -241,21 +249,21 @@ EOT;
         $model = \Gust\Model::create($model_name);
 
         // check if dir exists
-        if(!is_dir($gust_env['kyte_dir'].'app')) {
+        if(!is_dir(($developer_mode || !isset($gust_env) ? '' : $gust_env['kyte_dir']).'app')) {
             // create dir
-            shell_exec(sprintf("mkdir %s", $gust_env['kyte_dir'].'app'));
+            shell_exec(sprintf("mkdir %s", ($developer_mode || !isset($gust_env)  ? '' : $gust_env['kyte_dir']).'app'));
         }
-        if(!is_dir($gust_env['kyte_dir'].'app/models')) {
+        if(!is_dir(($developer_mode || !isset($gust_env)  ? '' : $gust_env['kyte_dir']).'app/models')) {
             // create dir
-            shell_exec(sprintf("mkdir %s", $gust_env['kyte_dir'].'app/models'));
+            shell_exec(sprintf("mkdir %s", ($developer_mode && !isset($gust_env)  ? '' : $gust_env['kyte_dir']).'app/models'));
         }
         
         // write to file
-        file_put_contents($gust_env['kyte_dir'].'app/models/'.$model_name.'.php', $model);
+        file_put_contents(($developer_mode || !isset($gust_env)  ? '' : $gust_env['kyte_dir']).'app/models/'.$model_name.'.php', $model);
     }
 
     // add new model to db
-    if ($argv[1] == 'model' && $argv[2] == 'add' && isset($argv[3])) {
+    if ($argv[1] == 'model' && $argv[2] == 'add' && isset($argv[3]) && !$developer_mode) {
         // load DB lib
         require_once __DIR__.'/lib/Database.php';
 
