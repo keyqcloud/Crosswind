@@ -281,7 +281,7 @@ EOT;
 
         //  set permissions for primary admin role
         $perm = new \Kyte\Core\ModelObject(Permission);
-        foreach(['new','udpate','get','delete'] as $action) {
+        foreach(['new','update','get','delete'] as $action) {
             $perm->create([
                 'role' => 1,
                 'model' => $model_name,
