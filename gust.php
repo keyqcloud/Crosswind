@@ -55,7 +55,7 @@ EOT;
     $developer_mode = false;
 }
 
-if ($developer_mode) {
+if (!$developer_mode) {
 // check if required files exist
     if (!file_exists($gust_env['kyte_dir'].'config.php')) {
         echo "Missing configuration file.  Please create a configuration file with path ".$gust_env['kyte_dir'].'config.php'.PHP_EOL;
