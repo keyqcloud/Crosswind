@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php
 
-$developer_mode = false;
+$developer_mode = true;
 
 // prevent access from web
 if (PHP_SAPI !== 'cli' && PHP_SAPI !== 'phpdbg') {
@@ -46,13 +46,13 @@ EOT;
         // write config file
         file_put_contents(KYTE_gust_env, $config_content);
         require_once(KYTE_gust_env);
-        $developer_mode = true;
+        $developer_mode = false;
     } else {
         echo "Server configuration not found - running in developer mode.\n";
     }
 } else {
     require_once(KYTE_gust_env);
-    $developer_mode = true;
+    $developer_mode = false;
 }
 
 if ($developer_mode) {
