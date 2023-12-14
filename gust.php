@@ -130,7 +130,7 @@ EOT;
 
         // create account
         echo "Creating account...";
-        $account = new \Kyte\Core\ModelObject(Account);
+        $account = new \Kyte\Core\ModelObject(KyteAccount);
         $length=20; //maximum: 32
         do {
             $account_number = substr(md5(uniqid(microtime())),0,$length);
@@ -153,7 +153,7 @@ EOT;
         $secret_key = hash_hmac('sha1', $identifier, $epoch);
         $public_key = hash_hmac('sha1', $identifier, $secret_key);
 
-        $apiKey = new \Kyte\Core\ModelObject(APIKey);
+        $apiKey = new \Kyte\Core\ModelObject(KyteAPIKey);
         if (!$apiKey->create([
             'identifier' => $identifier,
             'public_key' => $public_key,
@@ -201,7 +201,7 @@ EOT;
 
         // create user
         echo "Creating new admin user...";
-        $user = new \Kyte\Core\ModelObject(User);
+        $user = new \Kyte\Core\ModelObject(KyteUser);
         if (!$user->create([
             'name' => $argv[4],
             'email' => $argv[5],
