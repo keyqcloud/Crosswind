@@ -78,6 +78,20 @@ EOT;
 					$field .= ' decimal('.$attrs['precision'].','.$attrs['scale'].')';
 				} elseif ($attrs['type'] == 't') {
 					$field .= ' text';
+				} elseif ($attrs['type'] == 'tt') {
+					$field .= ' tinytext';
+				} elseif ($attrs['type'] == 'mt') {
+					$field .= ' mediumtext';
+				} elseif ($attrs['type'] == 'lt') {
+					$field .= ' longtext';
+				} elseif ($attrs['type'] == 'b') {
+					$field .= ' blob';
+				} elseif ($attrs['type'] == 'tb') {
+					$field .= ' tinyblob';
+				} elseif ($attrs['type'] == 'mb') {
+					$field .= ' mediumblob';
+				} elseif ($attrs['type'] == 'lb') {
+					$field .= ' longblob';
 				} else {
 					echo "\n";
 					echo "\e[0;31m\033[1mUnknown type ".$attrs['type']." for column $name of table $tbl_name.\033[0m\n";
