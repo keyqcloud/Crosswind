@@ -221,7 +221,7 @@ EOT;
         $apps = new \Kyte\Core\Model(Application);
         $apps->retrieve();
         foreach ($apps->objects as $app) {
-            echo "\033[1m{$app->name}\033[0m | Identifier: {$app->identifier}\n";
+            echo "\033[1m{$app->name}\033[0m\tIdentifier: {$app->identifier}\n";
         }
     }
 
