@@ -239,9 +239,9 @@ EOT;
         foreach ($apikeys->objects as $apikey) {
             $account = new \Kyte\Core\ModelObject(KyteAccount);
             if ($account->retrieve('id', $apikey->kyte_account)) {
-                echo "\033[1m{$account->name}\033[0m\tNumber: {$account->number}\tPublic Key: {$apikey->public_key}\tSecret Key: {$apikey->secret_key}\tIdentifier: {$apikey->identifier}\n";
+                echo "\033[1m{$account->name}\033[0m\tNumber: {$account->number}\tPublic: {$apikey->public_key}\tSecret: {$apikey->secret_key}\tIdentifier: {$apikey->identifier}\n";
             } else {
-                echo "\033[1mUnknown Account\033[0m\tNumber: ?\tPublic Key: {$apikey->public_key}\tSecret Key: {$apikey->secret_key}\tIdentifier: {$apikey->identifier}\n";
+                echo "\033[1mUnknown Account\033[0m\tNumber: ?\tPublic: {$apikey->public_key}\tSecret: {$apikey->secret_key}\tIdentifier: {$apikey->identifier}\n";
             }
         }
     }
