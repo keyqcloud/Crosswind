@@ -256,10 +256,10 @@ EOT;
                 $apikey = new \Kyte\Core\ModelObject(KyteAPIKey);
                 if ($apikey->retrieve('kyte_account', $app->kyte_account)) {
                     // Retrieve the necessary information (assuming it's available in your environment)
-                    $endpoint = $_SERVER['SERVER_NAME'];
-                    $public_key = 'your_public_key'; // Replace with actual value or fetch from the environment
-                    $identifier = 'your_identifier'; // Replace with actual value or fetch from the environment
-                    $account = 'your_account'; // Replace with actual value or fetch from the environment
+                    $endpoint = empty($_SERVER['SERVER_NAME']) ? 'https://place_your_endpoint_here.example.com' : $_SERVER['SERVER_NAME'];
+                    $public_key = $apikey->public_key; // Replace with actual value or fetch from the environment
+                    $identifier = $apikey->identifier; // Replace with actual value or fetch from the environment
+                    $account = $account->number; // Replace with actual value or fetch from the environment
                     $app_id = $argv[3];
 
                     // JavaScript template for kyte-connect.js
