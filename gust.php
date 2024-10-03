@@ -246,6 +246,63 @@ EOT;
         }
     }
 
+    // generates a kyte-connect.js file that can be used for custom integrations with Kyte API using Kyte JS
+    if ($argv[1] == 'create' && $argv[2] == 'kyte-connect' && isset($argv[3]) && !empty($argv[3]) && !$developer_mode) {
+
+        $app = new \Kyte\Core\ModelObject(Application);
+        if ($app->retrieve('identifier', $argv[3])) {
+            $account = new \Kyte\Core\ModelObject(KyteAccount);
+            if ($account->retrieve('id', $app->kyte_account)) {
+                $apikey = new \Kyte\Core\ModelObject(KyteAPIKey);
+                if ($apikey->retrieve('kyte_account', $app->kyte_account)) {
+                    // Retrieve the necessary information (assuming it's available in your environment)
+                    $endpoint = $_SERVER['SERVER_NAME'];
+                    $public_key = 'your_public_key'; // Replace with actual value or fetch from the environment
+                    $identifier = 'your_identifier'; // Replace with actual value or fetch from the environment
+                    $account = 'your_account'; // Replace with actual value or fetch from the environment
+                    $app_id = $argv[3];
+
+                    // JavaScript template for kyte-connect.js
+                    $js_content = <<<EOT
+let endpoint = '$endpoint';
+let publickey = '$public_key';
+let identifier = '$identifier';
+let account = '$account';
+let appId = '$app_id';
+
+var k = new Kyte(endpoint, publickey, identifier, account, appId);
+
+k.init();
+
+// add global logout handler
+$(document).ready(function() {
+    k.addLogoutHandler("#logout");
+});
+EOT;
+
+                    // Display the content in the terminal with formatting
+                    echo "Generated kyte-connect.js:\n\n";
+                    echo "-----------------------------------------\n";
+                    echo $js_content . "\n";
+                    echo "-----------------------------------------\n";
+                    echo "\nYou can copy the above content or retrieve the file.\n";
+
+                    // Save the content to kyte-connect.js in the user's home directory
+                    $file_path = $_SERVER['HOME'] . '/kyte-connect.js';
+                    file_put_contents($file_path, $js_content);
+                    echo "The file has been saved as $file_path\n";
+                } else {
+                    echo "No API keys found for application.\n";
+                }
+            } else {
+                echo "No active account found for application.\n";
+            }
+        } else {
+            echo "No application found with specified identifier. Please try `list apps` to find the app you are trying to create a kyte-connect.js file for.\n";
+        }
+    }
+
+
     // create a new controller file
     if ($argv[1] == 'controller' && $argv[2] == 'create' && isset($argv[3])) {
         require_once __DIR__.'/lib/Controller.php';
