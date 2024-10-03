@@ -216,6 +216,15 @@ EOT;
 
     }
 
+    //
+    if ($argv[1] == 'list' && $argv[2] == 'apps' && !$developer_mode) {
+        $apps = new \Kyte\Core\Model(Application);
+        $apps->retireve();
+        foreach ($apps->objects as $app) {
+            echo "\033[1m{$app->name}\033[0m | Identifier: {$app->identifier}\n";
+        }
+    }
+
     // create a new controller file
     if ($argv[1] == 'controller' && $argv[2] == 'create' && isset($argv[3])) {
         require_once __DIR__.'/lib/Controller.php';
