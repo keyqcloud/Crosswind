@@ -225,6 +225,27 @@ EOT;
         }
     }
 
+    if ($argv[1] == 'list' && $argv[2] == 'accounts' && !$developer_mode) {
+        $accounts = new \Kyte\Core\Model(KyteAccount);
+        $accounts->retrieve();
+        foreach ($accounts->objects as $account) {
+            echo "\033[1m{$account->name}\033[0m\tNumber: {$account->number}\n";
+        }
+    }
+
+    if ($argv[1] == 'list' && $argv[2] == 'apikeys' && !$developer_mode) {
+        $apikeys = new \Kyte\Core\Model(KyteAPIKey);
+        $apikeys->retrieve();
+        foreach ($apikeys->objects as $apikey) {
+            $accounts = new \Kyte\Core\ModelObject(KyteAccount);
+            if ($accounts->retrieve('id', $apikey->kyte_account)) {
+                echo "\033[1m{$account->name}\033[0m\tNumber: {$account->number}\tPublic Key: {$apikey->public_key}\tSecret Key: {$apikey->secret_key}\tIdentifier: {$apikey->identifier}\n";
+            } else {
+                echo "\033[1mUnknown Account\033[0m\tNumber: ?\tPublic Key: {$apikey->public_key}\tSecret Key: {$apikey->secret_key}\tIdentifier: {$apikey->identifier}\n";
+            }
+        }
+    }
+
     // create a new controller file
     if ($argv[1] == 'controller' && $argv[2] == 'create' && isset($argv[3])) {
         require_once __DIR__.'/lib/Controller.php';
