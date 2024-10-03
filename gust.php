@@ -219,7 +219,7 @@ EOT;
     //
     if ($argv[1] == 'list' && $argv[2] == 'apps' && !$developer_mode) {
         $apps = new \Kyte\Core\Model(Application);
-        $apps->retireve();
+        $apps->retrieve();
         foreach ($apps->objects as $app) {
             echo "\033[1m{$app->name}\033[0m | Identifier: {$app->identifier}\n";
         }
