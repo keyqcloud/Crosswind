@@ -8,7 +8,7 @@ gust init db
 
 Once the database initialized successfully, it is time to create a root account (master admin) using the following command:
 ```
-init account [Account Name] [User's Name] [email] [password]
+php gust.php init account [Account Name] [User's Name] [email] [password]
 ```
 
 Make sure to replace the values in the square brakets.
